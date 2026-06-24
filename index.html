@@ -39,7 +39,8 @@
     .cc-t2col{grid-template-columns:1fr !important;gap:30px 0 !important}
     .cc-tchart{overflow-x:auto !important}
     .cc-tpad{padding:30px 20px 60px !important}
-    .cc-tlead{grid-template-columns:1fr 1fr !important;gap:0 20px !important}
+    .cc-tlead{grid-template-columns:1fr !important;gap:28px 0 !important}
+    .cc-tlead .cc-tlead-inj div:first-child{font-size:60px !important}
   }
 </style>
 <template id="__bundler_thumbnail">
@@ -77,12 +78,12 @@
 
       <!-- Lead -->
       <div style="font:500 11px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:3px;margin-bottom:18px">{{ T.trendSub }}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px;align-items:end;margin-bottom:28px">
+      <div class="cc-tlead" style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px;align-items:end;margin-bottom:28px">
         <div>
           <div style="font:900 88px 'Space Grotesk';color:#ff5f48;line-height:.82;letter-spacing:-2.5px">{{ trendsDeathsFmt }}</div>
           <div style="font:500 15px 'Noto Sans TC';color:#9a9aa2;margin-top:12px">{{ T.deaths }}</div>
         </div>
-        <div>
+        <div class="cc-tlead-inj">
           <div style="font:900 60px 'Space Grotesk';color:#f0f0f3;line-height:.82;letter-spacing:-1.5px">{{ trendsInjFmt }}</div>
           <div style="font:500 15px 'Noto Sans TC';color:#9a9aa2;margin-top:10px">{{ T.injuries }}</div>
         </div>
@@ -360,7 +361,7 @@ class Component extends DCLogic {
     locTop: '—', locPct: '—', peakHour: '—', peakHourPct: '—',
     peakDow: '—', peakDowPct: '—', topGender: '—', topGenderPct: '—',
     perDay: '—', year: null, years: ['—'], county: '', countyList: [], lang: 'zh',
-    page: 'map'
+    page: 'trends'
   };
 
   // top roads / top causes for the current filter set (computed once per filter change)
