@@ -28,8 +28,8 @@
     .cc-header{padding:0 14px !important;height:52px !important}
     .cc-header-right{display:none !important}
     .cc-main{flex-direction:column !important}
-    .cc-left{width:100% !important;max-width:100% !important;border-right:none !important;border-top:1px solid #141416 !important;padding:18px 18px 14px !important;max-height:52vh !important;order:2 !important}
-    .cc-map{order:1 !important;flex:none !important;height:42vh !important}
+    .cc-map{order:1 !important;flex:0 0 42vh !important;height:42vh !important}
+    .cc-left{order:2 !important;flex:1 !important;width:100% !important;max-width:100% !important;max-height:none !important;border-right:none !important;border-top:1px solid #141416 !important;padding:18px 18px 16px !important;overflow-y:auto !important}
     .cc-detail{right:8px !important;left:8px !important;width:auto !important;max-width:calc(100% - 16px) !important}
     .cc-stats{grid-template-columns:repeat(2,1fr) !important;gap:14px 16px !important}
     .cc-hero-big{font-size:50px !important;letter-spacing:-1px !important}
@@ -65,12 +65,12 @@
     <!-- left editorial column -->
     <div class="cc-left" style="flex:none;width:clamp(360px, 40%, 580px);border-right:1px solid #141416;padding:46px 50px 36px;display:flex;flex-direction:column;overflow-y:auto;z-index:20">
       <div style="font:500 12px 'Noto Sans TC';color:#ff5a3c;letter-spacing:3px;margin-bottom:18px">{{ year }} · 道路交通事故</div>
-      <div style="display:flex;align-items:flex-end;gap:30px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;align-items:end;gap:0 32px">
         <div>
           <div class="cc-hero-big" style="font:900 78px 'Space Grotesk';color:#ff5f48;line-height:.84;letter-spacing:-2.5px">{{ deathsFmt }}</div>
-          <div style="font:500 14px 'GenWanMin2 TC R','Noto Sans TC';color:#c98a82;margin-top:10px">死亡</div>
+          <div style="font:500 14px 'Noto Sans TC';color:#c98a82;margin-top:10px">死亡</div>
         </div>
-        <div style="padding-bottom:2px">
+        <div>
           <div class="cc-hero-sm" style="font:900 56px 'Space Grotesk';color:#f0f0f3;line-height:.84;letter-spacing:-1.5px">{{ injFmt }}</div>
           <div style="font:500 14px 'Noto Sans TC';color:#8e8e96;margin-top:9px">受傷</div>
         </div>
@@ -87,7 +87,7 @@
       </div>
 
       <!-- rankings -->
-      <div class="cc-rankings" style="margin-top:32px;display:flex;gap:32px;flex-wrap:wrap">
+      <div class="cc-rankings" style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:0 32px">
         <div style="flex:1;min-width:170px">
           <div style="font:500 10px 'IBM Plex Mono';color:#4a4a52;letter-spacing:2px;margin-bottom:13px">熱門路段</div>
           <sc-for list="{{ roads }}" as="r" hint-placeholder-count="6">
