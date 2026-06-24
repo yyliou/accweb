@@ -36,6 +36,10 @@
     .cc-hero-sm{font-size:34px !important}
     .cc-bar{padding:8px 14px 10px !important}
     .cc-rankings{grid-template-columns:1fr !important;gap:0 !important}
+    .cc-t2col{grid-template-columns:1fr !important;gap:30px 0 !important}
+    .cc-tchart{overflow-x:auto !important}
+    .cc-tpad{padding:30px 20px 60px !important}
+    .cc-tlead{grid-template-columns:1fr 1fr !important;gap:0 20px !important}
   }
 </style>
 <template id="__bundler_thumbnail">
@@ -69,7 +73,7 @@
 
   <!-- Trends overlay page -->
   <div style="position:absolute;top:64px;left:0;right:0;bottom:0;overflow-y:auto;background:#0a0a0c;z-index:35;display:{{ trendsDisplay }};flex-direction:column">
-    <div style="max-width:1080px;margin:0 auto;padding:56px 60px 80px;width:100%;box-sizing:border-box">
+    <div class="cc-tpad" style="max-width:1080px;margin:0 auto;padding:56px 60px 80px;width:100%;box-sizing:border-box">
 
       <!-- Lead -->
       <div style="font:500 11px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:3px;margin-bottom:18px">{{ T.trendSub }}</div>
@@ -90,11 +94,11 @@
       <!-- year trend — always visible -->
       <div style="margin-bottom:56px">
         <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:20px">{{ T.yearTitle }}</div>
-        <div style="width:100%">{{ trendLineChart }}</div>
+        <div class="cc-tchart" style="width:100%;overflow-x:auto">{{ trendLineChart }}</div>
       </div>
 
       <!-- vehicle + county side-by-side -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 56px;margin-bottom:56px">
+      <div class="cc-t2col" style="display:grid;grid-template-columns:1fr 1fr;gap:0 56px;margin-bottom:56px">
         <div>
           <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:18px">{{ T.trendVehTitle }}</div>
           <div style="display:flex;flex-direction:column;gap:10px">
@@ -120,7 +124,7 @@
       </div>
 
       <!-- monthly + hourly -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 56px">
+      <div class="cc-t2col" style="display:grid;grid-template-columns:1fr 1fr;gap:0 56px;margin-bottom:0;padding-bottom:0">
         <div>
           <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:18px">{{ T.monthlyTitle }}</div>
           <div style="display:flex;height:100px;align-items:flex-end;gap:4px">
@@ -145,6 +149,10 @@
         </div>
       </div>
 
+      <div style="margin-top:48px;padding-top:16px;border-top:1px solid #161618;font:400 10px 'IBM Plex Mono','Noto Sans TC';color:#4a4a52;line-height:1.9">
+        {{ T.madeBy }} · <a href="https://yyliou.github.io" target="_blank" style="color:#6c6c74;text-decoration:none">yyliou.github.io</a> · <a href="mailto:{{ T.footerEmail }}" style="color:#6c6c74;text-decoration:none">{{ T.footerEmail }}</a><br>
+        <a href="{{ T.dataAckUrl }}" target="_blank" style="color:#4a4a52;text-decoration:none">{{ T.dataAck }}</a>
+      </div>
     </div>
   </div>
 
@@ -156,20 +164,34 @@
       <div style="font:400 14px/1.7 'Noto Sans TC';color:#6c6c74;margin-bottom:48px">{{ T.researchDesc }}</div>
 
       <div style="border-left:3px solid #ff5a3c;padding:22px 26px;background:#0e0e10;border-radius:0 8px 8px 0;margin-bottom:24px">
-        <div style="font:500 10px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:1.5px;margin-bottom:10px">TRANSPORTATION RESEARCH PART A · VOL. 205 · 2026</div>
-        <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;line-height:1.35;margin-bottom:14px">The causal effects of removing hook-turn regulation on road safety</div>
-        <div style="font:400 13px/1.8 'Noto Sans TC';color:#8a8a92;margin-bottom:18px">{{ T.paper1Abstract }}</div>
-        <a href="https://doi.org/10.1016/j.tra.2026.104860" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font:500 11px 'IBM Plex Mono';color:#ff8a5c;text-decoration:none;border:1px solid #3a2420;padding:7px 14px;border-radius:5px;transition:.15s">Journal → DOI 10.1016/j.tra.2026.104860</a>
+        <div style="display:flex;gap:18px;align-items:flex-start">
+          <img src="https://ars.els-cdn.com/content/image/X09658564.jpg" alt="Trans. Res. A" style="width:110px;flex:none;border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.7);margin-top:2px">
+          <div style="flex:1">
+            <div style="font:500 10px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:1.5px;margin-bottom:10px">TRANSPORTATION RESEARCH PART A · VOL. 205 · 2026</div>
+            <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;line-height:1.35;margin-bottom:14px">The causal effects of removing hook-turn regulation on road safety</div>
+            <div style="font:400 13px/1.8 'Noto Sans TC';color:#8a8a92;margin-bottom:18px">{{ T.paper1Abstract }}</div>
+            <a href="https://doi.org/10.1016/j.tra.2026.104860" target="_blank" style="display:inline-flex;align-items:center;font:500 11px 'IBM Plex Mono';color:#ff8a5c;text-decoration:none;border:1px solid #3a2420;padding:7px 14px;border-radius:5px;transition:.15s">10.1016/j.tra.2026.104860</a>
+          </div>
+        </div>
       </div>
 
       <div style="border-left:3px solid #ff5a3c;padding:22px 26px;background:#0e0e10;border-radius:0 8px 8px 0;margin-bottom:40px">
-        <div style="font:500 10px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:1.5px;margin-bottom:10px">ANNALS OF TOURISM RESEARCH EMPIRICAL INSIGHTS · VOL. 7(1) · 2026</div>
-        <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;line-height:1.35;margin-bottom:14px">Traffic accidents of religious tourism</div>
-        <div style="font:400 13px/1.8 'Noto Sans TC';color:#8a8a92;margin-bottom:18px">{{ T.paper2Abstract }}</div>
-        <a href="https://doi.org/10.1016/j.annale.2026.100209" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font:500 11px 'IBM Plex Mono';color:#ff8a5c;text-decoration:none;border:1px solid #3a2420;padding:7px 14px;border-radius:5px;transition:.15s">Journal → DOI 10.1016/j.annale.2026.100209</a>
+        <div style="display:flex;gap:18px;align-items:flex-start">
+          <img src="https://ars.els-cdn.com/content/image/X26669579.jpg" alt="Ann. Tour. Res." style="width:110px;flex:none;border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.7);margin-top:2px">
+          <div style="flex:1">
+            <div style="font:500 10px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:1.5px;margin-bottom:10px">ANNALS OF TOURISM RESEARCH EMPIRICAL INSIGHTS · VOL. 7(1) · 2026</div>
+            <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;line-height:1.35;margin-bottom:14px">Traffic accidents of religious tourism</div>
+            <div style="font:400 13px/1.8 'Noto Sans TC';color:#8a8a92;margin-bottom:18px">{{ T.paper2Abstract }}</div>
+            <a href="https://doi.org/10.1016/j.annale.2026.100209" target="_blank" style="display:inline-flex;align-items:center;font:500 11px 'IBM Plex Mono';color:#ff8a5c;text-decoration:none;border:1px solid #3a2420;padding:7px 14px;border-radius:5px;transition:.15s">10.1016/j.annale.2026.100209</a>
+          </div>
+        </div>
       </div>
 
-      <a href="https://yyliou.github.io/research.html" target="_blank" style="display:inline-flex;align-items:center;gap:8px;font:500 12px 'IBM Plex Mono';color:#9a9aa2;text-decoration:none;border:1px solid #2a2a30;padding:10px 18px;border-radius:6px;transition:.15s">All publications → yyliou.github.io/research.html</a>
+      <a href="https://yyliou.github.io/research.html" target="_blank" style="display:inline-flex;align-items:center;font:500 12px 'IBM Plex Mono';color:#9a9aa2;text-decoration:none;border:1px solid #2a2a30;padding:10px 18px;border-radius:6px;transition:.15s">All Publications</a>
+      <div style="margin-top:48px;padding-top:16px;border-top:1px solid #161618;font:400 10px 'IBM Plex Mono','Noto Sans TC';color:#4a4a52;line-height:1.9">
+        {{ T.madeBy }} · <a href="https://yyliou.github.io" target="_blank" style="color:#6c6c74;text-decoration:none">yyliou.github.io</a> · <a href="mailto:{{ T.footerEmail }}" style="color:#6c6c74;text-decoration:none">{{ T.footerEmail }}</a><br>
+        <a href="{{ T.dataAckUrl }}" target="_blank" style="color:#4a4a52;text-decoration:none">{{ T.dataAck }}</a>
+      </div>
     </div>
   </div>
 
@@ -319,7 +341,7 @@
       <div style="flex:none;text-align:right;min-width:98px">
         <div style="font:700 18px 'Space Grotesk';color:#f2f2f4;line-height:1">{{ dateLabel }}</div>
         <div style="font:500 10px 'Noto Sans TC';color:#6c6c74;margin-top:3px">{{ accFmt }} {{ T.accCount }}</div>
-        <div style="font:400 10px 'IBM Plex Mono','Noto Sans TC';color:#4a4a52;margin-top:4px;white-space:nowrap">{{ T.madeBy }} · <a href="https://yyliou.github.io" target="_blank" style="color:#6c6c74;text-decoration:none">yyliou.github.io</a></div>
+        <div style="font:400 10px 'IBM Plex Mono','Noto Sans TC';color:#4a4a52;margin-top:4px;white-space:nowrap">{{ T.madeBy }} · <a href="https://yyliou.github.io" target="_blank" style="color:#6c6c74;text-decoration:none">yyliou.github.io</a> · <a href="mailto:{{ footerEmail }}" style="color:#4a4a52;text-decoration:none">{{ footerEmail }}</a></div>
       </div>
     </div>
   </div>
@@ -507,6 +529,8 @@ class Component extends DCLogic {
     const overlay = new deck.MapboxOverlay({ interleaved: false, pickingRadius: 9, layers: [] });
     map.addControl(overlay);
     this.overlay = overlay;
+    // re-render points on zoom so meter-radius + alpha both update
+    map.on('zoom', () => { if (this.slice) this.updateLayers(this.slice); });
     // click empty map area → close any open detail card
     map.on('click', (e) => {
       const picked = overlay.pickObject({ x: e.point.x, y: e.point.y, radius: 9, layerIds: ['core'] });
@@ -638,24 +662,27 @@ class Component extends DCLogic {
       layers = [new deck.HexagonLayer({ id: 'hex', data: slice, getPosition: d => [d.lon, d.lat],
         radius: 2600, coverage: 0.9, extruded: false, colorRange: this.hexRange(), opacity: 0.82, gpuAggregation: true })];
     } else {
-      // glowing point cloud — additive blend. Alpha + radius scale DOWN as the
-      // visible count grows, so a high-volume slice (e.g. all A2) can't blow the
-      // whole island out to white; a sparse slice still glows brightly.
+      // Glowing point cloud. Radius unit = 'meters' so zoom in/out auto-scales
+      // geographically. Min/max pixel clamps prevent invisible or giant points.
+      // Alpha scales with: (1) point density k (fewer pts → brighter) and
+      // (2) zoom zf (zoomed in → fewer overlaps → increase opacity).
       const glow = this.glowBlend();
+      const zoom = this.map ? this.map.getZoom() : 7;
+      const zf = Math.max(0, Math.min(1.5, (zoom - 5.5) / 4.5)); // 0 at z5.5, 1 at z10
       const n = slice.length || 1;
-      const k = Math.sqrt(1500 / Math.max(n, 800));        // 1.0 for ~1.5k pts → small for 100k+
+      const k = Math.sqrt(1500 / Math.max(n, 800));
+      const alphaMult = (0.35 + zf * 0.65) * k; // boosts opacity as user zooms in
       const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, Math.round(x)));
-      const glowA = clamp(40 * k, 4, 44);
-      const coreA = clamp(230 * k, 30, 235);
-      const glowMax = clamp(11 * Math.max(k, 0.5), 4, 11);
+      const glowA = clamp(50 * alphaMult, 4, 55);
+      const coreA = clamp(240 * alphaMult, 28, 240);
       layers = [
         new deck.ScatterplotLayer({ id: 'glow', data: slice, getPosition: d => [d.lon, d.lat],
-          getRadius: 1, radiusUnits: 'pixels', radiusMinPixels: 3, radiusMaxPixels: glowMax,
+          getRadius: 260, radiusUnits: 'meters', radiusMinPixels: 2.5, radiusMaxPixels: 18,
           getFillColor: d => d.sev === 'A1' ? [255, 110, 50, glowA] : [255, 150, 70, Math.round(glowA * 0.8)],
           stroked: false, pickable: false, parameters: glow,
-          updateTriggers: { getFillColor: [coreA] } }),
+          updateTriggers: { getFillColor: [glowA] } }),
         new deck.ScatterplotLayer({ id: 'core', data: slice, getPosition: d => [d.lon, d.lat],
-          getRadius: 1, radiusUnits: 'pixels', radiusMinPixels: 1.4, radiusMaxPixels: 2.8,
+          getRadius: 85, radiusUnits: 'meters', radiusMinPixels: 1.2, radiusMaxPixels: 6,
           getFillColor: d => d.sev === 'A1' ? [255, 224, 180, coreA] : [255, 188, 120, Math.round(coreA * 0.85)],
           stroked: false, pickable: true, parameters: glow,
           updateTriggers: { getFillColor: [coreA] },
@@ -752,9 +779,13 @@ class Component extends DCLogic {
       timelineLabel: zh ? `逐日累積 · ${s.year || ''} 全年` : `Daily · ${s.year || ''} full year`,
       accCount: zh ? '起事故' : 'accidents',
       madeBy: zh ? '製作' : 'Made by',
-      dataCredit: zh ? `資料：道路交通事故 A1 / A2 · ${s.year || ''}` : `Data: Traffic Accidents A1/A2 · ${s.year || ''}`,
+      dataCredit: zh ? '道路交通事故資料 A1 / A2' : 'Traffic Accident Data A1/A2',
+      footerEmail: 'd10627008@ntu.edu.tw',
+      dataAck: zh ? '資料來源：內政部警政署道路交通事故開放資料' : 'Data source: Taiwan National Police Agency open data',
+      dataAckUrl: 'https://data.gov.tw/datasets/search?p=1&size=10&s=_score_desc&rft=年傷亡道路交通事故資料',
       detailLoc: zh ? '地點' : 'Location', detailScene: zh ? '事發位置' : 'Scene',
-      detailWeather: zh ? '天候' : 'Weather', detailCause: zh ? '肇因' : 'Cause',
+      detailWeather: zh ? '天候' : 'Weather',
+      detailCause: zh ? '主要肇因（當事者一）' : 'Cause (Party 1)',
       detailParties: zh ? '當事人' : 'Parties', detailUnits: zh ? '位' : '',
       captionDot: zh ? '每一點 = 一場事故' : 'Each dot = one accident',
       allCounties: zh ? '全部縣市' : 'All counties',
