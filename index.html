@@ -830,14 +830,14 @@ class Component extends DCLogic {
       scopeLabel: s.county ? tr(s.county) : (zh ? '全台' : 'All Taiwan'),
       roads: s.roads, causes: s.causes,
       T: Object.assign(T, {
-        title: zh ? '台灣車禍地圖' : 'Taiwan Crash Atlas',
+        title: zh ? '臺灣車禍地圖' : 'Taiwan Crash Atlas',
         pageTrends: zh ? '趨勢' : 'Trends', pageMap: zh ? '地圖' : 'Map', pageResearch: zh ? '研究' : 'Research',
         monthlyTitle: zh ? '月份事故分布' : 'Monthly distribution',
         hourlyTitle: zh ? '事發時段分布' : 'Time of day',
         yearTitle: zh ? '年度事故件數' : 'Accidents by year',
         trendSub: (()=>{ const td=this.td||{}; const yrs=td.years||[]; const mn=yrs.length?yrs[0].year:2025; const mx=yrs.length?yrs[yrs.length-1].year:2025; return zh?(yrs.length>1?`${mn}–${mx} · 全台累計`:`${mn} · 全台`):(yrs.length>1?`${mn}–${mx} · Taiwan`:`${mn} · Taiwan`); })(),
         researchTitle: zh ? '相關研究' : 'Related Research',
-        researchDesc: zh ? '以下兩篇論文利用台灣交通部道路交通事故資料庫進行因果推論研究。' : 'The following papers use Taiwan\'s Traffic Accident Database for causal analysis.',
+        researchDesc: zh ? '以下兩篇論文利用臺灣交通部道路交通事故資料庫進行因果推論研究。' : 'The following papers use Taiwan\'s Traffic Accident Database for causal analysis.',
         trendVehTitle: zh ? '車種別事故分布' : 'Accidents by vehicle type',
         trendCountyTitle: zh ? '縣市別事故數' : 'Accidents by county',
         paper1Abstract: zh
@@ -925,7 +925,7 @@ class Component extends DCLogic {
         if(yrs.length<2){
           const pd=((td.totalDeaths||0)/365).toFixed(1), pi=Math.round((td.totalInj||0)/365);
           return zh
-            ?`${first.year} 年，台灣共發生 ${fmt(td.totalAcc)} 起交通事故，造成 ${fmt(td.totalDeaths)} 人死亡、${fmt(td.totalInj)} 人受傷。平均每天逾 ${pd} 人死亡、${pi} 人受傷。`
+            ?`${first.year} 年，臺灣共發生 ${fmt(td.totalAcc)} 起交通事故，造成 ${fmt(td.totalDeaths)} 人死亡、${fmt(td.totalInj)} 人受傷。平均每天逾 ${pd} 人死亡、${pi} 人受傷。`
             :`In ${first.year}, Taiwan recorded ${fmt(td.totalAcc)} accidents, ${fmt(td.totalDeaths)} deaths and ${fmt(td.totalInj)} injuries — over ${pd} fatalities and ${pi} injuries per day.`;
         }
         const cD=((last.deaths-first.deaths)/Math.max(1,first.deaths)*100).toFixed(0);
@@ -933,7 +933,7 @@ class Component extends DCLogic {
         const dirD=+cD>=0?(zh?'上升':'rose'):(zh?'下降':'fell');
         const dirI=+cI>=0?(zh?'上升':'rose'):(zh?'下降':'fell');
         return zh
-          ?`從 ${first.year} 到 ${last.year}，台灣道路死亡人數${dirD} ${Math.abs(cD)}%（${fmt(first.deaths)} → ${fmt(last.deaths)} 人）；受傷人數${dirI} ${Math.abs(cI)}%（${fmt(first.inj)} → ${fmt(last.inj)} 人）。`
+          ?`從 ${first.year} 到 ${last.year}，臺灣道路死亡人數${dirD} ${Math.abs(cD)}%（${fmt(first.deaths)} → ${fmt(last.deaths)} 人）；受傷人數${dirI} ${Math.abs(cI)}%（${fmt(first.inj)} → ${fmt(last.inj)} 人）。`
           :`From ${first.year} to ${last.year}, road fatalities ${dirD} by ${Math.abs(cD)}% (${fmt(first.deaths)} → ${fmt(last.deaths)}) while injuries ${dirI} by ${Math.abs(cI)}% (${fmt(first.inj)} → ${fmt(last.inj)}).`;
       })(),
       toggleLang: () => this.setState({ lang: s.lang === 'zh' ? 'en' : 'zh' }),
