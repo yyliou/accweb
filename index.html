@@ -118,29 +118,7 @@
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           {{ yearSelect }}
-          <select onChange="{{ onCounty }}" style="flex:1;min-width:128px;appearance:none;background:#121214;border:1px solid #232329;border-radius:8px;color:#cfcfd6;font:500 12px 'Noto Sans TC';padding:9px 12px;cursor:pointer">
-            <option value="">全部縣市</option>
-            <option value="臺南市">臺南市 (157)</option>
-            <option value="高雄市">高雄市 (140)</option>
-            <option value="桃園市">桃園市 (132)</option>
-            <option value="新北市">新北市 (123)</option>
-            <option value="彰化縣">彰化縣 (111)</option>
-            <option value="屏東縣">屏東縣 (106)</option>
-            <option value="臺中市">臺中市 (101)</option>
-            <option value="嘉義縣">嘉義縣 (86)</option>
-            <option value="雲林縣">雲林縣 (82)</option>
-            <option value="臺北市">臺北市 (73)</option>
-            <option value="南投縣">南投縣 (57)</option>
-            <option value="新竹縣">新竹縣 (55)</option>
-            <option value="宜蘭縣">宜蘭縣 (46)</option>
-            <option value="苗栗縣">苗栗縣 (44)</option>
-            <option value="花蓮縣">花蓮縣 (41)</option>
-            <option value="臺東縣">臺東縣 (38)</option>
-            <option value="新竹市">新竹市 (23)</option>
-            <option value="基隆市">基隆市 (17)</option>
-            <option value="嘉義市">嘉義市 (10)</option>
-            <option value="澎湖縣">澎湖縣 (6)</option>
-          </select>
+          {{ countySelect }}
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             <div class="chip" onClick="{{ vehAll }}" style="cursor:pointer;padding:7px 13px;border-radius:20px;font:500 11px 'Noto Sans TC';transition:.15s;background:{{ vAllBg }};border:1px solid {{ vAllBd }};color:{{ vAllFg }}">全部</div>
             <div class="chip" onClick="{{ vehMc }}" style="cursor:pointer;padding:7px 13px;border-radius:20px;font:500 11px 'Noto Sans TC';transition:.15s;background:{{ vMcBg }};border:1px solid {{ vMcBd }};color:{{ vMcFg }}">機車</div>
@@ -245,7 +223,7 @@ class Component extends DCLogic {
     topWeather: '—', topWeatherPct: '—', ageBand: '—', ageBandPct: '—',
     locTop: '—', locPct: '—', peakHour: '—', peakHourPct: '—',
     peakDow: '—', peakDowPct: '—', topGender: '—', topGenderPct: '—',
-    perDay: '—', year: null, years: ['—']
+    perDay: '—', year: null, years: ['—'], county: '', countyList: []
   };
 
   // top roads / top causes for the current filter set (computed once per filter change)
@@ -401,6 +379,7 @@ class Component extends DCLogic {
     this.records = await this.loadData();
     const yrs = (this.years && this.years.length) ? this.years : [2018];
     const latestYear = yrs[yrs.length - 1];
+    this.buildCountyList();
     const map = new maplibregl.Map({
       container: 'map',
       style: 'https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json',
@@ -440,6 +419,25 @@ class Component extends DCLogic {
     setTimeout(() => this.hideLoader(), 2500);
   }
 
+  buildCountyList() {
+    // compute county counts from full record set (no year/sev filter — show total)
+    const counts = {};
+    for (const r of this.records || []) {
+      if (r.county) counts[r.county] = (counts[r.county] || 0) + 1;
+    }
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    this.setState({ countyList: sorted });
+  }
+
+  buildCountyList() {
+    const counts = {};
+    for (const r of this.records || []) {
+      if (r.county) counts[r.county] = (counts[r.county] || 0) + 1;
+    }
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    this.setState({ countyList: sorted });
+  }
+
   hideLoader() {
     const el = document.getElementById('ccload');
     if (el && el.style.display !== 'none') { el.style.opacity = '0'; setTimeout(() => { el.style.display = 'none'; }, 500); }
@@ -462,10 +460,10 @@ class Component extends DCLogic {
     if (s.veh !== 'all') {
       base = base.filter(d => {
         const v = d.veh || '';
-        if (s.veh === '機車') return v === '機車';
-        if (s.veh === '小客車') return v === '小客車';
-        if (s.veh === '大貨車') return v.indexOf('貨車') >= 0 || v.indexOf('聯結') >= 0 || v.indexOf('曳引') >= 0;
-        if (s.veh === '行人') return v === '人';
+        if (s.veh === '機車') return v.includes('機車') || v.includes('重機') || v.includes('輕機') || v.includes('電動自行');
+        if (s.veh === '小客車') return v.includes('小客') || v.includes('自小客') || v.includes('客、貨兩用') || (v.includes('客車') && !v.includes('大客'));
+        if (s.veh === '大貨車') return v.includes('大貨') || v.includes('貨車') || v.includes('聯結') || v.includes('曳引') || v.includes('大型特');
+        if (s.veh === '行人') return v === '人' || v.includes('行人') || v.includes('步行');
         return true;
       });
     }
@@ -583,6 +581,19 @@ class Component extends DCLogic {
 
       accFmt: s.accFmt, deathsFmt: s.deathsFmt, injFmt: s.injFmt, dateLabel: s.dateLabel,
       year: s.year != null ? String(s.year) : '—',
+      // county select — also built via React.createElement to avoid sc-for-inside-select issue
+      countySelect: React.createElement(
+        'select',
+        {
+          onChange: (e) => this.setCounty(e.target.value),
+          value: s.county || '',
+          style: { flex: 1, minWidth: '128px', appearance: 'none', background: '#121214', border: '1px solid #232329', borderRadius: '8px', color: '#cfcfd6', font: "500 12px 'Noto Sans TC',sans-serif", padding: '9px 12px', cursor: 'pointer' }
+        },
+        React.createElement('option', { key: '', value: '' }, '全部縣市'),
+        ...(s.countyList || []).map(([name, count]) =>
+          React.createElement('option', { key: name, value: name }, name + ' (' + count + ')')
+        )
+      ),
       // sc-for inside <select> doesn't work in DC — build via React.createElement
       yearSelect: React.createElement(
         'select',
