@@ -54,9 +54,123 @@
 <div style="position:relative;width:100%;height:100vh;min-height:600px;background:#0a0a0c;font-family:'Noto Sans TC',sans-serif;display:flex;flex-direction:column;overflow:hidden">
 
   <!-- top bar -->
-  <div class="cc-header" style="flex:none;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 36px;border-bottom:1px solid #161618;z-index:30">
-    <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;letter-spacing:.2px">台灣車禍地圖<span style="color:#ff5a3c">.</span></div>
-    <div class="cc-header-right" style="font:500 11px 'IBM Plex Mono';color:#55555e;letter-spacing:.5px">資料：道路交通事故 A1 / A2 · {{ year }}</div>
+  <div class="cc-header" style="flex:none;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid #161618;z-index:30">
+    <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;letter-spacing:.2px">{{ T.title }}<span style="color:#ff5a3c">.</span></div>
+    <div style="display:flex;gap:3px">
+      <div onClick="{{ goTrends }}" class="navlink" style="cursor:pointer;padding:6px 14px;border-radius:6px;font:500 12px 'Noto Sans TC';color:{{ trendsTabFg }};border:1px solid {{ trendsTabBd }};transition:.15s">{{ T.pageTrends }}</div>
+      <div onClick="{{ goMap }}" class="navlink" style="cursor:pointer;padding:6px 14px;border-radius:6px;font:500 12px 'Noto Sans TC';color:{{ mapTabFg }};border:1px solid {{ mapTabBd }};transition:.15s">{{ T.pageMap }}</div>
+      <div onClick="{{ goResearch }}" class="navlink" style="cursor:pointer;padding:6px 14px;border-radius:6px;font:500 12px 'Noto Sans TC';color:{{ researchTabFg }};border:1px solid {{ researchTabBd }};transition:.15s">{{ T.pageResearch }}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div onClick="{{ toggleLang }}" class="navlink" style="cursor:pointer;font:600 11px 'IBM Plex Mono';color:#9a9aa2;border:1px solid #2a2a30;border-radius:5px;padding:4px 10px;transition:.15s">{{ T.langBtn }}</div>
+      <div class="cc-header-right" style="font:500 11px 'IBM Plex Mono';color:#55555e;letter-spacing:.5px">{{ T.dataCredit }}</div>
+    </div>
+  </div>
+
+  <!-- Trends overlay page -->
+  <div style="position:absolute;top:64px;left:0;right:0;bottom:0;overflow-y:auto;background:#0a0a0c;z-index:35;display:{{ trendsDisplay }};flex-direction:column">
+    <div style="max-width:1080px;margin:0 auto;padding:56px 60px 80px;width:100%;box-sizing:border-box">
+
+      <!-- Lead -->
+      <div style="font:500 11px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:3px;margin-bottom:18px">{{ T.trendSub }}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px;align-items:end;margin-bottom:28px">
+        <div>
+          <div style="font:900 88px 'Space Grotesk';color:#ff5f48;line-height:.82;letter-spacing:-2.5px">{{ trendsDeathsFmt }}</div>
+          <div style="font:500 15px 'Noto Sans TC';color:#9a9aa2;margin-top:12px">{{ T.deaths }}</div>
+        </div>
+        <div>
+          <div style="font:900 60px 'Space Grotesk';color:#f0f0f3;line-height:.82;letter-spacing:-1.5px">{{ trendsInjFmt }}</div>
+          <div style="font:500 15px 'Noto Sans TC';color:#9a9aa2;margin-top:10px">{{ T.injuries }}</div>
+        </div>
+      </div>
+
+      <!-- narrative -->
+      <div style="font:400 15px/1.9 'Noto Sans TC';color:#6c6c74;max-width:640px;margin-bottom:52px;border-left:2px solid #2a1a18;padding-left:18px">{{ trendNarrative }}</div>
+
+      <!-- year trend — always visible -->
+      <div style="margin-bottom:56px">
+        <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:20px">{{ T.yearTitle }}</div>
+        <div style="width:100%">{{ trendLineChart }}</div>
+      </div>
+
+      <!-- vehicle + county side-by-side -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 56px;margin-bottom:56px">
+        <div>
+          <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:18px">{{ T.trendVehTitle }}</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ topVehBars }}" as="b" hint-placeholder-count="4">
+              <div>
+                <div style="display:flex;justify-content:space-between;font:500 12px 'Noto Sans TC';color:#cfcfd6;margin-bottom:5px"><span>{{ b.label }}</span><span style="font-family:'IBM Plex Mono';color:#ff8a5c">{{ b.count }}</span></div>
+                <div style="height:4px;border-radius:2px;background:#19130f"><div style="height:100%;border-radius:2px;background:#ff5a3c;width:{{ b.w }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div>
+          <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:18px">{{ T.trendCountyTitle }}</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ topCountyBars }}" as="b" hint-placeholder-count="5">
+              <div>
+                <div style="display:flex;justify-content:space-between;font:500 12px 'Noto Sans TC';color:#cfcfd6;margin-bottom:5px"><span>{{ b.label }}</span><span style="font-family:'IBM Plex Mono';color:#ff8a5c">{{ b.count }}</span></div>
+                <div style="height:4px;border-radius:2px;background:#19130f"><div style="height:100%;border-radius:2px;background:#ff5a3c;width:{{ b.w }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <!-- monthly + hourly -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 56px">
+        <div>
+          <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:18px">{{ T.monthlyTitle }}</div>
+          <div style="display:flex;height:100px;align-items:flex-end;gap:4px">
+            <sc-for list="{{ monthlyBars }}" as="b" hint-placeholder-count="12">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end">
+                <div style="width:100%;border-radius:2px 2px 0 0;height:{{ b.h }};background:#ff5a3c;opacity:.8"></div>
+                <div style="font:500 9px 'IBM Plex Mono';color:#6c6c74">{{ b.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div>
+          <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:18px">{{ T.hourlyTitle }}</div>
+          <div style="display:flex;height:100px;align-items:flex-end;gap:2px">
+            <sc-for list="{{ hourlyBars }}" as="b" hint-placeholder-count="24">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end">
+                <div style="width:100%;border-radius:1px;height:{{ b.h }};background:#ff5a3c;opacity:.75"></div>
+                <div style="font:500 8px 'IBM Plex Mono';color:#6c6c74">{{ b.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Research overlay page -->
+  <div style="position:absolute;top:64px;left:0;right:0;bottom:0;overflow-y:auto;background:#0a0a0c;z-index:35;display:{{ researchDisplay }}">
+    <div style="max-width:820px;margin:0 auto;padding:60px 48px 80px">
+      <div style="font:500 11px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:3px;margin-bottom:10px">Yu-You Liou · 劉昱佑</div>
+      <div style="font:700 28px 'Space Grotesk';color:#f2f2f4;margin-bottom:10px">{{ T.researchTitle }}</div>
+      <div style="font:400 14px/1.7 'Noto Sans TC';color:#6c6c74;margin-bottom:48px">{{ T.researchDesc }}</div>
+
+      <div style="border-left:3px solid #ff5a3c;padding:22px 26px;background:#0e0e10;border-radius:0 8px 8px 0;margin-bottom:24px">
+        <div style="font:500 10px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:1.5px;margin-bottom:10px">TRANSPORTATION RESEARCH PART A · VOL. 205 · 2026</div>
+        <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;line-height:1.35;margin-bottom:14px">The causal effects of removing hook-turn regulation on road safety</div>
+        <div style="font:400 13px/1.8 'Noto Sans TC';color:#8a8a92;margin-bottom:18px">{{ T.paper1Abstract }}</div>
+        <a href="https://doi.org/10.1016/j.tra.2026.104860" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font:500 11px 'IBM Plex Mono';color:#ff8a5c;text-decoration:none;border:1px solid #3a2420;padding:7px 14px;border-radius:5px;transition:.15s">Journal → DOI 10.1016/j.tra.2026.104860</a>
+      </div>
+
+      <div style="border-left:3px solid #ff5a3c;padding:22px 26px;background:#0e0e10;border-radius:0 8px 8px 0;margin-bottom:40px">
+        <div style="font:500 10px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:1.5px;margin-bottom:10px">ANNALS OF TOURISM RESEARCH EMPIRICAL INSIGHTS · VOL. 7(1) · 2026</div>
+        <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;line-height:1.35;margin-bottom:14px">Traffic accidents of religious tourism</div>
+        <div style="font:400 13px/1.8 'Noto Sans TC';color:#8a8a92;margin-bottom:18px">{{ T.paper2Abstract }}</div>
+        <a href="https://doi.org/10.1016/j.annale.2026.100209" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font:500 11px 'IBM Plex Mono';color:#ff8a5c;text-decoration:none;border:1px solid #3a2420;padding:7px 14px;border-radius:5px;transition:.15s">Journal → DOI 10.1016/j.annale.2026.100209</a>
+      </div>
+
+      <a href="https://yyliou.github.io/research.html" target="_blank" style="display:inline-flex;align-items:center;gap:8px;font:500 12px 'IBM Plex Mono';color:#9a9aa2;text-decoration:none;border:1px solid #2a2a30;padding:10px 18px;border-radius:6px;transition:.15s">All publications → yyliou.github.io/research.html</a>
+    </div>
   </div>
 
   <!-- main split -->
@@ -64,32 +178,32 @@
 
     <!-- left editorial column -->
     <div class="cc-left" style="flex:none;width:clamp(360px, 40%, 580px);border-right:1px solid #141416;padding:46px 50px 36px;display:flex;flex-direction:column;overflow-y:auto;z-index:20">
-      <div style="font:500 12px 'Noto Sans TC';color:#ff5a3c;letter-spacing:3px;margin-bottom:18px">{{ year }} · 道路交通事故</div>
+      <div style="font:500 12px 'Noto Sans TC';color:#ff5a3c;letter-spacing:3px;margin-bottom:18px">{{ year }} · {{ T.category }}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;align-items:end;gap:0 32px">
         <div>
           <div class="cc-hero-big" style="font:900 78px 'Space Grotesk';color:#ff5f48;line-height:.84;letter-spacing:-2.5px">{{ deathsFmt }}</div>
-          <div style="font:500 14px 'Noto Sans TC';color:#c98a82;margin-top:10px">死亡</div>
+          <div style="font:500 14px 'Noto Sans TC';color:#c98a82;margin-top:10px">{{ T.deaths }}</div>
         </div>
         <div>
           <div class="cc-hero-sm" style="font:900 56px 'Space Grotesk';color:#f0f0f3;line-height:.84;letter-spacing:-1.5px">{{ injFmt }}</div>
-          <div style="font:500 14px 'Noto Sans TC';color:#8e8e96;margin-top:9px">受傷</div>
+          <div style="font:500 14px 'Noto Sans TC';color:#8e8e96;margin-top:9px">{{ T.injuries }}</div>
         </div>
       </div>
-      <div style="font:400 14px/1.8 'Noto Sans TC';color:#6c6c74;margin-top:22px;max-width:380px;text-wrap:pretty">平均每天逾 {{ perDay }} 人。每一個亮點，都是一個家庭。</div>
+      <div style="font:400 14px/1.8 'Noto Sans TC';color:#6c6c74;margin-top:22px;max-width:380px;text-wrap:pretty">{{ T.desc }}</div>
 
       <div class="cc-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px 26px;margin-top:30px">
-        <div><div style="font:700 24px 'Space Grotesk';color:#f2f2f4;line-height:1.05;white-space:nowrap">{{ topWeather }}</div><div style="font:500 11px 'Noto Sans TC';color:#6c6c74;margin-top:6px">天候最多 · {{ topWeatherPct }}</div></div>
-        <div><div style="font:700 24px 'Space Grotesk';color:#f2f2f4;line-height:1.05;white-space:nowrap">{{ ageBand }}</div><div style="font:500 11px 'Noto Sans TC';color:#6c6c74;margin-top:6px">最多年齡（歲）· {{ ageBandPct }}</div></div>
-        <div><div style="font:700 24px 'Space Grotesk';color:#f2f2f4;line-height:1.05;white-space:nowrap">{{ locTop }}</div><div style="font:500 11px 'Noto Sans TC';color:#6c6c74;margin-top:6px">事發位置 · {{ locPct }}</div></div>
-        <div><div style="font:700 24px 'Space Grotesk';color:#f2f2f4;line-height:1.05;white-space:nowrap">{{ peakHour }}</div><div style="font:500 11px 'Noto Sans TC';color:#6c6c74;margin-top:6px">高峰時段 · {{ peakHourPct }}</div></div>
-        <div><div style="font:700 24px 'Space Grotesk';color:#f2f2f4;line-height:1.05;white-space:nowrap">{{ peakDow }}</div><div style="font:500 11px 'Noto Sans TC';color:#6c6c74;margin-top:6px">最常發生 · {{ peakDowPct }}</div></div>
-        <div><div style="font:700 24px 'Space Grotesk';color:#f2f2f4;line-height:1.05;white-space:nowrap">{{ topGender }}</div><div style="font:500 11px 'Noto Sans TC';color:#6c6c74;margin-top:6px">當事人性別 · {{ topGenderPct }}</div></div>
+        <div><div style="font:700 24px 'Space Grotesk';color:#f2f2f4;line-height:1.05;white-space:nowrap">{{ Tv.peakDow }}</div><div style="font:500 11px 'Noto Sans TC';color:#6c6c74;margin-top:6px">{{ T.statDow }}{{ peakDowPct }}</div></div>
+        <div><div style="font:700 24px 'Space Grotesk';color:#f2f2f4;line-height:1.05;white-space:nowrap">{{ peakHour }}</div><div style="font:500 11px 'Noto Sans TC';color:#6c6c74;margin-top:6px">{{ T.statHour }}{{ peakHourPct }}</div></div>
+        <div><div style="font:700 24px 'Space Grotesk';color:#f2f2f4;line-height:1.05;white-space:nowrap">{{ Tv.topWeather }}</div><div style="font:500 11px 'Noto Sans TC';color:#6c6c74;margin-top:6px">{{ T.statWeather }}{{ topWeatherPct }}</div></div>
+        <div><div style="font:700 24px 'Space Grotesk';color:#f2f2f4;line-height:1.05;white-space:nowrap">{{ Tv.locTop }}</div><div style="font:500 11px 'Noto Sans TC';color:#6c6c74;margin-top:6px">{{ T.statLoc }}{{ locPct }}</div></div>
+        <div><div style="font:700 24px 'Space Grotesk';color:#f2f2f4;line-height:1.05;white-space:nowrap">{{ Tv.topGender }}</div><div style="font:500 11px 'Noto Sans TC';color:#6c6c74;margin-top:6px">{{ T.statGender }}{{ topGenderPct }}</div></div>
+        <div><div style="font:700 24px 'Space Grotesk';color:#f2f2f4;line-height:1.05;white-space:nowrap">{{ ageBand }}</div><div style="font:500 11px 'Noto Sans TC';color:#6c6c74;margin-top:6px">{{ T.statAge }}{{ ageBandPct }}</div></div>
       </div>
 
       <!-- rankings -->
       <div class="cc-rankings" style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:0 32px">
         <div style="flex:1;min-width:170px">
-          <div style="font:500 10px 'IBM Plex Mono';color:#4a4a52;letter-spacing:2px;margin-bottom:13px">熱門路段</div>
+          <div style="font:500 10px 'IBM Plex Mono';color:#4a4a52;letter-spacing:2px;margin-bottom:13px">{{ T.hotRoads }}</div>
           <sc-for list="{{ roads }}" as="r" hint-placeholder-count="6">
             <div style="margin-bottom:10px">
               <div style="display:flex;justify-content:space-between;gap:8px;font:500 12px 'Noto Sans TC';color:#cfcfd6;margin-bottom:5px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.label }}</span><span style="font-family:'IBM Plex Mono';color:#ff8a5c;flex:none">{{ r.count }}</span></div>
@@ -98,7 +212,7 @@
           </sc-for>
         </div>
         <div style="flex:1;min-width:170px">
-          <div style="font:500 10px 'IBM Plex Mono';color:#4a4a52;letter-spacing:2px;margin-bottom:13px">主要肇因</div>
+          <div style="font:500 10px 'IBM Plex Mono';color:#4a4a52;letter-spacing:2px;margin-bottom:13px">{{ T.topCauses }}</div>
           <sc-for list="{{ causes }}" as="c" hint-placeholder-count="6">
             <div style="margin-bottom:10px">
               <div style="display:flex;justify-content:space-between;gap:8px;font:500 12px 'Noto Sans TC';color:#cfcfd6;margin-bottom:5px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.label }}</span><span style="font-family:'IBM Plex Mono';color:#ff8a5c;flex:none">{{ c.count }}</span></div>
@@ -110,21 +224,21 @@
 
       <!-- filters -->
       <div style="margin-top:30px;padding-top:30px;border-top:1px solid #1a1a1e">
-        <div style="font:500 10px 'IBM Plex Mono';color:#4a4a52;letter-spacing:2px;margin-bottom:14px">篩選</div>
+        <div style="font:500 10px 'IBM Plex Mono';color:#4a4a52;letter-spacing:2px;margin-bottom:14px">{{ T.filters }}</div>
         <div style="display:flex;gap:7px;margin-bottom:14px">
-          <div class="seg" onClick="{{ sevAll }}" style="cursor:pointer;flex:1;text-align:center;padding:9px 0;border-radius:8px;font:500 12px 'Noto Sans TC';transition:.15s;background:{{ allBg }};border:1px solid {{ allBd }};color:{{ allFg }}">全部</div>
-          <div class="seg" onClick="{{ sevA1 }}" style="cursor:pointer;flex:1;text-align:center;padding:9px 0;border-radius:8px;font:500 12px 'Noto Sans TC';transition:.15s;background:{{ a1Bg }};border:1px solid {{ a1Bd }};color:{{ a1Fg }}">A1 死亡</div>
-          <div class="seg" onClick="{{ sevA2 }}" style="cursor:pointer;flex:1;text-align:center;padding:9px 0;border-radius:8px;font:500 12px 'Noto Sans TC';transition:.15s;background:{{ a2Bg }};border:1px solid {{ a2Bd }};color:{{ a2Fg }}">A2 受傷</div>
+          <div class="seg" onClick="{{ sevAll }}" style="cursor:pointer;flex:1;text-align:center;padding:9px 0;border-radius:8px;font:500 12px 'Noto Sans TC';transition:.15s;background:{{ allBg }};border:1px solid {{ allBd }};color:{{ allFg }}">{{ T.all }}</div>
+          <div class="seg" onClick="{{ sevA1 }}" style="cursor:pointer;flex:1;text-align:center;padding:9px 0;border-radius:8px;font:500 12px 'Noto Sans TC';transition:.15s;background:{{ a1Bg }};border:1px solid {{ a1Bd }};color:{{ a1Fg }}">{{ T.a1 }}</div>
+          <div class="seg" onClick="{{ sevA2 }}" style="cursor:pointer;flex:1;text-align:center;padding:9px 0;border-radius:8px;font:500 12px 'Noto Sans TC';transition:.15s;background:{{ a2Bg }};border:1px solid {{ a2Bd }};color:{{ a2Fg }}">{{ T.a2 }}</div>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           {{ yearSelect }}
           {{ countySelect }}
           <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <div class="chip" onClick="{{ vehAll }}" style="cursor:pointer;padding:7px 13px;border-radius:20px;font:500 11px 'Noto Sans TC';transition:.15s;background:{{ vAllBg }};border:1px solid {{ vAllBd }};color:{{ vAllFg }}">全部</div>
-            <div class="chip" onClick="{{ vehMc }}" style="cursor:pointer;padding:7px 13px;border-radius:20px;font:500 11px 'Noto Sans TC';transition:.15s;background:{{ vMcBg }};border:1px solid {{ vMcBd }};color:{{ vMcFg }}">機車</div>
-            <div class="chip" onClick="{{ vehCar }}" style="cursor:pointer;padding:7px 13px;border-radius:20px;font:500 11px 'Noto Sans TC';transition:.15s;background:{{ vCarBg }};border:1px solid {{ vCarBd }};color:{{ vCarFg }}">小客車</div>
-            <div class="chip" onClick="{{ vehTruck }}" style="cursor:pointer;padding:7px 13px;border-radius:20px;font:500 11px 'Noto Sans TC';transition:.15s;background:{{ vTruckBg }};border:1px solid {{ vTruckBd }};color:{{ vTruckFg }}">大貨車</div>
-            <div class="chip" onClick="{{ vehPed }}" style="cursor:pointer;padding:7px 13px;border-radius:20px;font:500 11px 'Noto Sans TC';transition:.15s;background:{{ vPedBg }};border:1px solid {{ vPedBd }};color:{{ vPedFg }}">行人</div>
+            <div class="chip" onClick="{{ vehAll }}" style="cursor:pointer;padding:7px 13px;border-radius:20px;font:500 11px 'Noto Sans TC';transition:.15s;background:{{ vAllBg }};border:1px solid {{ vAllBd }};color:{{ vAllFg }}">{{ T.all }}</div>
+            <div class="chip" onClick="{{ vehMc }}" style="cursor:pointer;padding:7px 13px;border-radius:20px;font:500 11px 'Noto Sans TC';transition:.15s;background:{{ vMcBg }};border:1px solid {{ vMcBd }};color:{{ vMcFg }}">{{ T.mc }}</div>
+            <div class="chip" onClick="{{ vehCar }}" style="cursor:pointer;padding:7px 13px;border-radius:20px;font:500 11px 'Noto Sans TC';transition:.15s;background:{{ vCarBg }};border:1px solid {{ vCarBd }};color:{{ vCarFg }}">{{ T.car }}</div>
+            <div class="chip" onClick="{{ vehTruck }}" style="cursor:pointer;padding:7px 13px;border-radius:20px;font:500 11px 'Noto Sans TC';transition:.15s;background:{{ vTruckBg }};border:1px solid {{ vTruckBd }};color:{{ vTruckFg }}">{{ T.truck }}</div>
+            <div class="chip" onClick="{{ vehPed }}" style="cursor:pointer;padding:7px 13px;border-radius:20px;font:500 11px 'Noto Sans TC';transition:.15s;background:{{ vPedBg }};border:1px solid {{ vPedBd }};color:{{ vPedFg }}">{{ T.ped }}</div>
           </div>
         </div>
 
@@ -143,7 +257,7 @@
       </div>
 
       <!-- caption -->
-      <div style="position:absolute;top:22px;right:26px;z-index:15;text-align:right;font:500 11px/1.7 'IBM Plex Mono';color:#6a5a55;display:{{ captionDisplay }};pointer-events:none">每一點 = 一場事故<br>{{ accFmt }} 起 · {{ scopeLabel }}</div>
+      <div style="position:absolute;top:22px;right:26px;z-index:15;text-align:right;font:500 11px/1.7 'IBM Plex Mono';color:#6a5a55;display:{{ captionDisplay }};pointer-events:none">{{ T.captionDot }}<br>{{ accFmt }} · {{ scopeLabel }}</div>
 
       <!-- detail card -->
       <div class="cc-detail" style="position:absolute;top:22px;right:24px;z-index:25;width:288px;max-width:calc(100% - 48px);background:rgba(12,12,15,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid #2a1d1c;border-radius:14px;padding:18px 20px;box-shadow:0 18px 50px rgba(0,0,0,.5);display:{{ detailDisplay }}">
@@ -154,17 +268,17 @@
         <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;margin-top:6px">{{ dCounty }}</div>
         <div style="font:500 12px 'Noto Sans TC';color:#8a8a92;margin-top:2px">{{ dDate }} · {{ dHour }}</div>
         <div style="display:flex;gap:18px;margin:16px 0;padding:12px 0;border-top:1px solid #1d1d22;border-bottom:1px solid #1d1d22">
-          <div><div style="font:700 22px 'Space Grotesk';color:#ff6b6b;line-height:1">{{ dDeaths }}</div><div style="font:500 10px 'Noto Sans TC';color:#6c6c74;margin-top:3px">死亡</div></div>
-          <div><div style="font:700 22px 'Space Grotesk';color:#ffb070;line-height:1">{{ dInj }}</div><div style="font:500 10px 'Noto Sans TC';color:#6c6c74;margin-top:3px">受傷</div></div>
+          <div><div style="font:700 22px 'Space Grotesk';color:#ff6b6b;line-height:1">{{ dDeaths }}</div><div style="font:500 10px 'Noto Sans TC';color:#6c6c74;margin-top:3px">{{ T.deaths }}</div></div>
+          <div><div style="font:700 22px 'Space Grotesk';color:#ffb070;line-height:1">{{ dInj }}</div><div style="font:500 10px 'Noto Sans TC';color:#6c6c74;margin-top:3px">{{ T.injuries }}</div></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:9px;font:500 12px 'Noto Sans TC'">
-          <div style="display:flex;justify-content:space-between;gap:14px"><span style="color:#6c6c74;white-space:nowrap">地點</span><span style="color:#cfcfd6;text-align:right">{{ dRoad }}</span></div>
-          <div style="display:flex;justify-content:space-between"><span style="color:#6c6c74">事發位置</span><span style="color:#cfcfd6">{{ dLoc }}</span></div>
-          <div style="display:flex;justify-content:space-between"><span style="color:#6c6c74">天候</span><span style="color:#cfcfd6">{{ dWeather }}</span></div>
-          <div style="display:flex;justify-content:space-between;gap:14px"><span style="color:#6c6c74;white-space:nowrap">肇因</span><span style="color:#cfcfd6;text-align:right">{{ dCause }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:14px"><span style="color:#6c6c74;white-space:nowrap">{{ T.detailLoc }}</span><span style="color:#cfcfd6;text-align:right">{{ dRoad }}</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#6c6c74">{{ T.detailScene }}</span><span style="color:#cfcfd6">{{ dLoc }}</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#6c6c74">{{ T.detailWeather }}</span><span style="color:#cfcfd6">{{ dWeather }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:14px"><span style="color:#6c6c74;white-space:nowrap">{{ T.detailCause }}</span><span style="color:#cfcfd6;text-align:right">{{ dCause }}</span></div>
         </div>
         <div style="margin-top:15px;padding-top:13px;border-top:1px solid #1d1d22">
-          <div style="font:500 10px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:10px">當事人 · 共 {{ dPartyCount }} 位</div>
+          <div style="font:500 10px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:10px">{{ T.detailParties }} · {{ dPartyCount }} {{ T.detailUnits }}</div>
           <div style="display:flex;flex-direction:column;gap:8px;max-height:168px;overflow-y:auto">
             <sc-for list="{{ dParties }}" as="p" hint-placeholder-count="2">
               <div style="display:flex;align-items:center;gap:10px">
@@ -183,7 +297,7 @@
     <div style="display:flex;align-items:center;gap:18px">
       <div onClick="{{ togglePlay }}" style="cursor:pointer;flex:none;width:46px;height:46px;border-radius:50%;background:#ff5a3c;display:flex;align-items:center;justify-content:center;color:#0a0a0c;font-size:15px;box-shadow:0 4px 18px rgba(255,90,60,.45)">{{ playIcon }}</div>
       <div style="flex:1">
-        <div style="display:flex;justify-content:space-between;font:500 10px 'IBM Plex Mono';color:#55555e;margin-bottom:7px"><span>1月</span><span>逐日累積 · {{ year }} 全年</span><span>12月</span></div>
+        <div style="display:flex;justify-content:space-between;font:500 10px 'IBM Plex Mono';color:#55555e;margin-bottom:7px"><span>{{ T.jan }}</span><span>{{ T.timelineLabel }}</span><span>{{ T.dec }}</span></div>
         <div onClick="{{ scrubClick }}" style="position:relative;height:38px;cursor:pointer">
           <div style="position:absolute;inset:0;display:flex;align-items:flex-end;gap:6px">
             <div style="flex:1;display:flex;align-items:flex-end;height:100%"><div style="width:100%;max-width:24px;margin:0 auto;height:83%;background:#2a1a18;border-radius:3px 3px 0 0"></div></div>
@@ -204,8 +318,8 @@
       </div>
       <div style="flex:none;text-align:right;min-width:98px">
         <div style="font:700 18px 'Space Grotesk';color:#f2f2f4;line-height:1">{{ dateLabel }}</div>
-        <div style="font:500 10px 'GenWanMin2 TC R','Noto Sans TC';color:#6c6c74;margin-top:3px">{{ accFmt }} 起事故</div>
-        <div style="font:400 10px 'IBM Plex Mono';color:#4a4a52;margin-top:4px;white-space:nowrap">製作 · <a href="https://yyliou.github.io" target="_blank" style="color:#6c6c74;text-decoration:none">yyliou.github.io</a></div>
+        <div style="font:500 10px 'Noto Sans TC';color:#6c6c74;margin-top:3px">{{ accFmt }} {{ T.accCount }}</div>
+        <div style="font:400 10px 'IBM Plex Mono','Noto Sans TC';color:#4a4a52;margin-top:4px;white-space:nowrap">{{ T.madeBy }} · <a href="https://yyliou.github.io" target="_blank" style="color:#6c6c74;text-decoration:none">yyliou.github.io</a></div>
       </div>
     </div>
   </div>
@@ -223,7 +337,8 @@ class Component extends DCLogic {
     topWeather: '—', topWeatherPct: '—', ageBand: '—', ageBandPct: '—',
     locTop: '—', locPct: '—', peakHour: '—', peakHourPct: '—',
     peakDow: '—', peakDowPct: '—', topGender: '—', topGenderPct: '—',
-    perDay: '—', year: null, years: ['—'], county: '', countyList: []
+    perDay: '—', year: null, years: ['—'], county: '', countyList: [], lang: 'zh',
+    page: 'map'
   };
 
   // top roads / top causes for the current filter set (computed once per filter change)
@@ -379,6 +494,7 @@ class Component extends DCLogic {
     this.records = await this.loadData();
     const yrs = (this.years && this.years.length) ? this.years : [2018];
     const latestYear = yrs[yrs.length - 1];
+    this.buildTrends();
     this.buildCountyList();
     const map = new maplibregl.Map({
       container: 'map',
@@ -419,14 +535,33 @@ class Component extends DCLogic {
     setTimeout(() => this.hideLoader(), 2500);
   }
 
-  buildCountyList() {
-    // compute county counts from full record set (no year/sev filter — show total)
-    const counts = {};
-    for (const r of this.records || []) {
-      if (r.county) counts[r.county] = (counts[r.county] || 0) + 1;
+  buildTrends() {
+    const recs = this.records || [];
+    const monthly = Array(12).fill(0), hourly = Array(24).fill(0);
+    const yearMap = {}, vehMap = {}, countyMap = {}, qMap = {};
+    for (const r of recs) {
+      monthly[(r.mo||1)-1]++; hourly[r.hr||0]++;
+      const y = r.year;
+      if (!yearMap[y]) yearMap[y] = { year: y, acc: 0, deaths: 0, inj: 0 };
+      yearMap[y].acc++; yearMap[y].deaths += r.deaths||0; yearMap[y].inj += r.inj||0;
+      if (r.veh) vehMap[r.veh] = (vehMap[r.veh]||0)+1;
+      if (r.county) countyMap[r.county] = (countyMap[r.county]||0)+1;
+      const q = Math.floor(((r.mo||1)-1)/3)+1;
+      const qk = `${y}-Q${q}`;
+      if (!qMap[qk]) qMap[qk] = {year:y, q, acc:0, deaths:0, inj:0};
+      qMap[qk].acc++; qMap[qk].deaths += r.deaths||0; qMap[qk].inj += r.inj||0;
     }
-    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    this.setState({ countyList: sorted });
+    this.td = {
+      monthly, hourly,
+      years: Object.values(yearMap).sort((a,b)=>a.year-b.year),
+      quarters: Object.values(qMap).sort((a,b)=>a.year!==b.year?a.year-b.year:a.q-b.q),
+      topVeh: Object.entries(vehMap).sort((a,b)=>b[1]-a[1]).slice(0,5),
+      topCounty: Object.entries(countyMap).sort((a,b)=>b[1]-a[1]).slice(0,6),
+      totalAcc: recs.length,
+      totalDeaths: recs.reduce((s,r)=>s+(r.deaths||0),0),
+      totalInj: recs.reduce((s,r)=>s+(r.inj||0),0),
+    };
+    this.forceUpdate();
   }
 
   buildCountyList() {
@@ -570,8 +705,64 @@ class Component extends DCLogic {
     const off = '#121214', offBd = '#232329', offFg = '#8a8a92';
     const sevPick = k => s.sev === k, vehPick = k => s.veh === k;
     const sel = s.selected || {};
+    const zh = s.lang !== 'en';
+    const tr = v => {
+      if (zh || !v) return v || '—';
+      const m = {
+        '晴':'Clear','陰':'Cloudy','雨':'Rain','霧':'Fog','暴雨':'Storm','風砂':'Dust/Wind',
+        '路段':'Road','交叉路口':'Intersection','交流道':'Interchange','其他':'Other','隧道':'Tunnel',
+        '週日':'Sun','週一':'Mon','週二':'Tue','週三':'Wed','週四':'Thu','週五':'Fri','週六':'Sat',
+        '男':'Male','女':'Female','不明':'Unknown',
+        '機車':'Motorcycle','小客車':'Car','大貨車':'Truck','小貨車':'Light Truck',
+        '大客車':'Bus','慢車':'Bicycle','行人':'Pedestrian','人':'Pedestrian','自行車':'Bicycle','電動自行車':'E-bike',
+        '臺北市':'Taipei City','台北市':'Taipei City','新北市':'New Taipei City','桃園市':'Taoyuan City',
+        '臺中市':'Taichung City','台中市':'Taichung City','臺南市':'Tainan City','台南市':'Tainan City',
+        '高雄市':'Kaohsiung City','基隆市':'Keelung City','新竹市':'Hsinchu City','嘉義市':'Chiayi City',
+        '新竹縣':'Hsinchu County','苗栗縣':'Miaoli County','彰化縣':'Changhua County','南投縣':'Nantou County',
+        '雲林縣':'Yunlin County','嘉義縣':'Chiayi County','屏東縣':'Pingtung County','宜蘭縣':'Yilan County',
+        '花蓮縣':'Hualien County','臺東縣':'Taitung County','台東縣':'Taitung County',
+        '澎湖縣':'Penghu County','金門縣':'Kinmen County','連江縣':'Lienchiang County',
+      };
+      if (m[v]) return m[v];
+      if (v.includes('機車')||v.includes('重機')||v.includes('輕機')) return 'Motorcycle';
+      if (v.includes('小客')||v.includes('自小客')||v.includes('客、貨兩用')) return 'Car';
+      if (v.includes('大客')||v.includes('巴士')) return 'Bus';
+      if (v.includes('大貨')||v.includes('聯結')||v.includes('曳引')) return 'Truck';
+      if (v.includes('小貨')) return 'Light Truck';
+      if (v.includes('腳踏')||v.includes('慢車')||v.includes('自行車')) return 'Bicycle';
+      if (v==='人'||v.includes('行人')||v.includes('步行')) return 'Pedestrian';
+      return v;
+    };
+    const T = {
+      category: zh ? '道路交通事故' : 'Traffic Accidents',
+      deaths: zh ? '死亡' : 'Deaths', injuries: zh ? '受傷' : 'Injuries',
+      desc: zh ? `平均每天逾 ${s.perDay} 人。每一個亮點，都是一個家庭。` : `Over ${s.perDay} per day on average. Every dot of light is a family.`,
+      statDow: zh ? '最常發生 · ' : 'Top weekday · ',
+      statHour: zh ? '高峰時段 · ' : 'Peak hours · ',
+      statWeather: zh ? '天候最多 · ' : 'Top weather · ',
+      statLoc: zh ? '事發位置 · ' : 'Location · ',
+      statGender: zh ? '當事人性別 · ' : 'Party gender · ',
+      statAge: zh ? '最多年齡（歲）· ' : 'Top age group · ',
+      hotRoads: zh ? '熱門路段' : 'Hot roads',
+      topCauses: zh ? '主要肇因' : 'Top causes',
+      filters: zh ? '篩選' : 'Filter',
+      all: zh ? '全部' : 'All', a1: zh ? 'A1 死亡' : 'A1 Fatal', a2: zh ? 'A2 受傷' : 'A2 Injury',
+      mc: zh ? '機車' : 'Moto', car: zh ? '小客車' : 'Car', truck: zh ? '大貨車' : 'Truck', ped: zh ? '行人' : 'Ped',
+      jan: zh ? '1月' : 'Jan', dec: zh ? '12月' : 'Dec',
+      timelineLabel: zh ? `逐日累積 · ${s.year || ''} 全年` : `Daily · ${s.year || ''} full year`,
+      accCount: zh ? '起事故' : 'accidents',
+      madeBy: zh ? '製作' : 'Made by',
+      dataCredit: zh ? `資料：道路交通事故 A1 / A2 · ${s.year || ''}` : `Data: Traffic Accidents A1/A2 · ${s.year || ''}`,
+      detailLoc: zh ? '地點' : 'Location', detailScene: zh ? '事發位置' : 'Scene',
+      detailWeather: zh ? '天候' : 'Weather', detailCause: zh ? '肇因' : 'Cause',
+      detailParties: zh ? '當事人' : 'Parties', detailUnits: zh ? '位' : '',
+      captionDot: zh ? '每一點 = 一場事故' : 'Each dot = one accident',
+      allCounties: zh ? '全部縣市' : 'All counties',
+      langBtn: zh ? 'EN' : '中',
+    };
+    const Tv = { topWeather: tr(s.topWeather), locTop: tr(s.locTop), peakDow: tr(s.peakDow), topGender: tr(s.topGender) };
     const dDate = sel.mo ? ((sel.year || 2018) + '/' + sel.mo + '/' + sel.d) : '';
-    const dHour = (sel.hr != null) ? (String(sel.hr).padStart(2, '0') + ':00 時段') : '';
+    const dHour = (sel.hr != null) ? (String(sel.hr).padStart(2, '0') + ':00' + (zh ? ' 時段' : '')) : '';
     const act = '#f2f2f4', inact = '#6c6c74';
 
     return {
@@ -589,9 +780,9 @@ class Component extends DCLogic {
           value: s.county || '',
           style: { flex: 1, minWidth: '128px', appearance: 'none', background: '#121214', border: '1px solid #232329', borderRadius: '8px', color: '#cfcfd6', font: "500 12px 'Noto Sans TC',sans-serif", padding: '9px 12px', cursor: 'pointer' }
         },
-        React.createElement('option', { key: '', value: '' }, '全部縣市'),
+        React.createElement('option', { key: '', value: '' }, T.allCounties),
         ...(s.countyList || []).map(([name, count]) =>
-          React.createElement('option', { key: name, value: name }, name + ' (' + count + ')')
+          React.createElement('option', { key: name, value: name }, tr(name))
         )
       ),
       // sc-for inside <select> doesn't work in DC — build via React.createElement
@@ -602,16 +793,122 @@ class Component extends DCLogic {
           value: s.year != null ? String(s.year) : '',
           style: { flexShrink: 0, appearance: 'none', background: '#121214', border: '1px solid #232329', borderRadius: '8px', color: '#cfcfd6', font: "500 12px 'IBM Plex Mono', monospace", padding: '9px 12px', cursor: 'pointer' }
         },
-        ...(s.years || []).map(yr => React.createElement('option', { key: yr, value: yr }, yr + ' 年'))
+        ...(s.years || []).map(yr => React.createElement('option', { key: yr, value: yr }, yr + (zh ? ' 年' : '')))
       ),
-      scopeLabel: s.county || '全台',
+      scopeLabel: s.county ? tr(s.county) : (zh ? '全台' : 'All Taiwan'),
       roads: s.roads, causes: s.causes,
-      topWeather: s.topWeather, topWeatherPct: s.topWeatherPct,
-      ageBand: s.ageBand, ageBandPct: s.ageBandPct,
-      locTop: s.locTop, locPct: s.locPct,
-      peakHour: s.peakHour, peakHourPct: s.peakHourPct,
-      peakDow: s.peakDow, peakDowPct: s.peakDowPct,
-      topGender: s.topGender, topGenderPct: s.topGenderPct, perDay: s.perDay,
+      T: Object.assign(T, {
+        title: zh ? '台灣車禍地圖' : 'Taiwan Crash Atlas',
+        pageTrends: zh ? '趨勢' : 'Trends', pageMap: zh ? '地圖' : 'Map', pageResearch: zh ? '研究' : 'Research',
+        monthlyTitle: zh ? '月份事故分布' : 'Monthly distribution',
+        hourlyTitle: zh ? '事發時段分布' : 'Time of day',
+        yearTitle: zh ? '年度事故件數' : 'Accidents by year',
+        trendSub: (()=>{ const td=this.td||{}; const yrs=td.years||[]; const mn=yrs.length?yrs[0].year:2025; const mx=yrs.length?yrs[yrs.length-1].year:2025; return zh?(yrs.length>1?`${mn}–${mx} · 全台累計`:`${mn} · 全台`):(yrs.length>1?`${mn}–${mx} · Taiwan`:`${mn} · Taiwan`); })(),
+        researchTitle: zh ? '相關研究' : 'Related Research',
+        researchDesc: zh ? '以下兩篇論文利用台灣交通部道路交通事故資料庫進行因果推論研究。' : 'The following papers use Taiwan\'s Traffic Accident Database for causal analysis.',
+        trendVehTitle: zh ? '車種別事故分布' : 'Accidents by vehicle type',
+        trendCountyTitle: zh ? '縣市別事故數' : 'Accidents by county',
+        paper1Abstract: zh
+          ? '以臺南市機車待轉取消政策為準自然實驗，使用差異中斷設計（difference-in-discontinuity）估計政策效果。發現取消待轉使事故件數減少 21%、受害者人數減少 19%，機車（−26%）降幅大於汽車（−18%），醫療費用估計減少 4.7%。'
+          : 'Using the removal of hook-turn regulation in Tainan City as a quasi-natural experiment, this paper applies a difference-in-discontinuity design. The policy reform reduced accident cases by 21% and victims by 19%, with larger reductions for motorcycles (−26%) than automobiles (−18%), and an estimated 4.7% decrease in medical expenditures.',
+        paper2Abstract: zh
+          ? '以大甲媽祖遶境為案例，使用差異中差法（difference-in-differences, DiD）分析宗教進香活動對道路安全的影響。發現遶境期間非致命性傷亡事故顯著增加，勞動生產力損失與醫療費用合計佔社會總交通事故成本的 6.3%。'
+          : 'Using the Dajia Mazu Pilgrimage as a natural experiment, this paper applies difference-in-differences (DiD) to examine the causal impact on traffic accidents. The pilgrimage significantly increased non-fatal injury accidents, with combined productivity losses and medical expenses accounting for 6.3% of total traffic accident costs.',
+      }), Tv,
+      // page nav
+      goTrends: () => this.setState({ page: 'trends' }),
+      goMap: () => this.setState({ page: 'map' }),
+      goResearch: () => this.setState({ page: 'research' }),
+      trendsTabFg: s.page==='trends'?'#ff5a3c':'#6c6c74', mapTabFg: s.page==='map'?'#ff5a3c':'#6c6c74', researchTabFg: s.page==='research'?'#ff5a3c':'#6c6c74',
+      trendsTabBd: s.page==='trends'?'#3a1a10':'transparent', mapTabBd: s.page==='map'?'#3a1a10':'transparent', researchTabBd: s.page==='research'?'#3a1a10':'transparent',
+      trendsDisplay: s.page==='trends'?'flex':'none',
+      researchDisplay: s.page==='research'?'block':'none',
+      // trend chart data
+      trendsDeathsFmt: (this.td||{}).totalDeaths ? (this.td.totalDeaths).toLocaleString('en-US') : '—',
+      trendsInjFmt: (this.td||{}).totalInj ? (this.td.totalInj).toLocaleString('en-US') : '—',
+      trendsAccFmt: (this.td||{}).totalAcc ? (this.td.totalAcc).toLocaleString('en-US') : '—',
+      monthlyBars: (()=>{ const td=this.td||{}; const mon=td.monthly||Array(12).fill(0); const mx=Math.max(1,...mon); const MZ=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']; const ME=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return mon.map((v,i)=>({h:(v/mx*100).toFixed(0)+'%',label:zh?MZ[i]:ME[i],hot:v===mx&&v>0})); })(),
+      hourlyBars: (()=>{ const td=this.td||{}; const hr=td.hourly||Array(24).fill(0); const mx=Math.max(1,...hr); return hr.map((v,i)=>({h:(v/mx*100).toFixed(0)+'%',label:i%4===0?String(i).padStart(2,'0'):'',hot:v===mx&&v>0})); })(),
+      yearBars: (()=>{ const td=this.td||{}; const yrs=td.years||[]; const mx=Math.max(1,...yrs.map(y=>y.acc)); return yrs.map(y=>({h:(y.acc/mx*100).toFixed(0)+'%',label:String(y.year),n:y.acc.toLocaleString('en-US'),deaths:y.deaths.toLocaleString('en-US'),hot:y.acc===mx})); })(),
+      trendLineChart: (()=>{
+        const td=this.td||{}; const qs=td.quarters||[];
+        if(!qs.length) return null;
+        const W=860, H=270, px=52, pr=52, pt=38, pb=38;
+        const cW=W-px-pr, cH=H-pt-pb, n=qs.length;
+        const maxD=Math.max(1,...qs.map(q=>q.deaths));
+        const maxI=Math.max(1,...qs.map(q=>q.inj));
+        // independent scales for each axis
+        const toX=i=>px+(n>1?i/(n-1)*cW:cW/2);
+        const toYD=v=>pt+cH-(v/maxD*cH);   // left axis: deaths
+        const toYI=v=>pt+cH-(v/maxI*cH);   // right axis: injuries (independent)
+        const dPts=qs.map((q,i)=>({x:toX(i),y:toYD(q.deaths),year:q.year,q:q.q}));
+        const iPts=qs.map((q,i)=>({x:toX(i),y:toYI(q.inj),q:q.q}));
+        const lineD=dPts.map((p,i)=>(i===0?`M${p.x} ${p.y}`:`L${p.x} ${p.y}`)).join(' ');
+        const lineI=iPts.map((p,i)=>(i===0?`M${p.x} ${p.y}`:`L${p.x} ${p.y}`)).join(' ');
+        const areaD=n>1?`M${dPts[0].x} ${H-pb} ${dPts.map(p=>`L${p.x} ${p.y}`).join(' ')} L${dPts[n-1].x} ${H-pb}Z`:``;
+        const mono="'IBM Plex Mono',monospace";
+        const fmtK=v=>v>=10000?(v/1000).toFixed(0)+'k':v>=1000?(v/1000).toFixed(1)+'k':String(v);
+        // grid lines (4 levels) — dual labels L=deaths, R=injuries
+        const gridLns=[0.25,0.5,0.75,1].map((f,gi)=>{
+          const y=pt+cH-f*cH;
+          return React.createElement('g',{key:'gr'+gi},
+            React.createElement('line',{x1:px,y1:y,x2:W-pr,y2:y,stroke:'#1a1a1e',strokeWidth:'1'}),
+            React.createElement('text',{x:px-5,y:y+4,textAnchor:'end',fill:'#ff8a5c',fontSize:9,fontFamily:mono},fmtK(Math.round(maxD*f))),
+            React.createElement('text',{x:W-pr+5,y:y+4,textAnchor:'start',fill:'#e09a2a',fontSize:9,fontFamily:mono},fmtK(Math.round(maxI*f)))
+          );
+        });
+        // year labels at Q1
+        const yearLbls=dPts.filter(p=>p.q===1).map((p,i)=>
+          React.createElement('text',{key:'yl'+i,x:p.x,y:H-5,textAnchor:'middle',fill:'#6c6c74',fontSize:10,fontFamily:mono},String(p.year))
+        );
+        const dDots=dPts.map((p,i)=>React.createElement('circle',{key:'dd'+i,cx:p.x,cy:p.y,r:p.q===1?4:2,fill:'#ff5a3c',stroke:'#0a0a0c',strokeWidth:'1'}));
+        const iDots=iPts.map((p,i)=>React.createElement('circle',{key:'id'+i,cx:p.x,cy:p.y,r:p.q===1?4:2,fill:'#f59e2e',stroke:'#0a0a0c',strokeWidth:'1'}));
+        // axis labels
+        const axLbls=React.createElement('g',{key:'ax'},
+          React.createElement('text',{x:px-5,y:pt-10,textAnchor:'end',fill:'#ff8a5c',fontSize:9,fontFamily:mono},zh?'← 死亡':'← Deaths'),
+          React.createElement('text',{x:W-pr+5,y:pt-10,textAnchor:'start',fill:'#e09a2a',fontSize:9,fontFamily:mono},zh?'受傷 →':'Injuries →')
+        );
+        const legend=React.createElement('g',{key:'lg'},
+          React.createElement('circle',{cx:px,cy:16,r:4,fill:'#ff5a3c'}),
+          React.createElement('text',{x:px+9,y:20,fill:'#cfcfd6',fontSize:10,fontFamily:mono},zh?'死亡（左軸）':'Deaths (L)'),
+          React.createElement('circle',{cx:px+115,cy:16,r:4,fill:'#f59e2e'}),
+          React.createElement('text',{x:px+124,y:20,fill:'#cfcfd6',fontSize:10,fontFamily:mono},zh?'受傷（右軸）':'Injuries (R)')
+        );
+        return React.createElement('svg',{width:'100%',viewBox:`0 0 ${W} ${H}`,style:{overflow:'visible'}},
+          React.createElement('defs',{},React.createElement('linearGradient',{id:'tg2',x1:'0',y1:'0',x2:'0',y2:'1'},React.createElement('stop',{offset:'0%',stopColor:'#ff5a3c',stopOpacity:'.10'}),React.createElement('stop',{offset:'100%',stopColor:'#ff5a3c',stopOpacity:'0'}))),
+          legend, axLbls, ...gridLns,
+          React.createElement('path',{d:areaD,fill:'url(#tg2)'}),
+          React.createElement('path',{d:lineI,fill:'none',stroke:'#f59e2e',strokeWidth:'2',strokeDasharray:'5 3',strokeLinejoin:'round'}),
+          React.createElement('path',{d:lineD,fill:'none',stroke:'#ff5a3c',strokeWidth:'2',strokeLinejoin:'round'}),
+          ...iDots, ...dDots, ...yearLbls
+        );
+      })(),
+      topVehBars: (()=>{ const tv=(this.td&&this.td.topVeh)||[]; const mx=Math.max(1,...tv.map(([,c])=>c)); return tv.map(([name,count])=>({label:tr(name)||name, count:count.toLocaleString('en-US'), w:(count/mx*100).toFixed(0)+'%'})); })(),
+      topCountyBars: (()=>{ const tc=(this.td&&this.td.topCounty)||[]; const mx=Math.max(1,...tc.map(([,c])=>c)); return tc.map(([name,count])=>({label:tr(name)||name, count:count.toLocaleString('en-US'), w:(count/mx*100).toFixed(0)+'%'})); })(),
+      trendNarrative: (()=>{
+        const td=this.td||{}; const yrs=td.years||[];
+        if(!yrs.length) return '';
+        const fmt=n=>(n||0).toLocaleString('en-US');
+        const first=yrs[0], last=yrs[yrs.length-1];
+        if(yrs.length<2){
+          const pd=((td.totalDeaths||0)/365).toFixed(1), pi=Math.round((td.totalInj||0)/365);
+          return zh
+            ?`${first.year} 年，台灣共發生 ${fmt(td.totalAcc)} 起交通事故，造成 ${fmt(td.totalDeaths)} 人死亡、${fmt(td.totalInj)} 人受傷。平均每天逾 ${pd} 人死亡、${pi} 人受傷。`
+            :`In ${first.year}, Taiwan recorded ${fmt(td.totalAcc)} accidents, ${fmt(td.totalDeaths)} deaths and ${fmt(td.totalInj)} injuries — over ${pd} fatalities and ${pi} injuries per day.`;
+        }
+        const cD=((last.deaths-first.deaths)/Math.max(1,first.deaths)*100).toFixed(0);
+        const cI=((last.inj-first.inj)/Math.max(1,first.inj)*100).toFixed(0);
+        const dirD=+cD>=0?(zh?'上升':'rose'):(zh?'下降':'fell');
+        const dirI=+cI>=0?(zh?'上升':'rose'):(zh?'下降':'fell');
+        return zh
+          ?`從 ${first.year} 到 ${last.year}，台灣道路死亡人數${dirD} ${Math.abs(cD)}%（${fmt(first.deaths)} → ${fmt(last.deaths)} 人）；受傷人數${dirI} ${Math.abs(cI)}%（${fmt(first.inj)} → ${fmt(last.inj)} 人）。`
+          :`From ${first.year} to ${last.year}, road fatalities ${dirD} by ${Math.abs(cD)}% (${fmt(first.deaths)} → ${fmt(last.deaths)}) while injuries ${dirI} by ${Math.abs(cI)}% (${fmt(first.inj)} → ${fmt(last.inj)}).`;
+      })(),
+      toggleLang: () => this.setState({ lang: s.lang === 'zh' ? 'en' : 'zh' }),
+      topWeatherPct: s.topWeatherPct, ageBand: s.ageBand, ageBandPct: s.ageBandPct,
+      locPct: s.locPct, peakHour: s.peakHour, peakHourPct: s.peakHourPct,
+      peakDowPct: s.peakDowPct, topGenderPct: s.topGenderPct, perDay: s.perDay,
+      heroLabel: zh ? (s.sev === 'A1' ? '人因交通事故失去生命' : (s.sev === 'A2' ? '人因交通事故受傷' : '人因交通事故傷亡')) : (s.sev === 'A1' ? 'lives lost in crashes' : (s.sev === 'A2' ? 'people injured in crashes' : 'killed or injured')),
 
       sevAll: () => this.setSev('all'), sevA1: () => this.setSev('A1'), sevA2: () => this.setSev('A2'),
       allBg: sevPick('all') ? onA : off, allBd: sevPick('all') ? onABd : offBd, allFg: sevPick('all') ? onAFg : offFg,
@@ -634,17 +931,19 @@ class Component extends DCLogic {
       captionDisplay: s.selected ? 'none' : 'block',
       detailDisplay: s.selected ? 'block' : 'none',
       closeDetail: () => this.closeDetail(),
-      dSev: sel.sev === 'A1' ? 'A1 · 死亡事故' : (sel.sev === 'A2' ? 'A2 · 受傷事故' : ''),
-      dCounty: sel.county || '', dDate, dHour,
+      dSev: sel.sev === 'A1' ? ('A1 · ' + (zh ? '死亡事故' : 'Fatal accident')) : (sel.sev === 'A2' ? ('A2 · ' + (zh ? '受傷事故' : 'Injury accident')) : ''),
+      dCounty: tr(sel.county || ''), dDate, dHour,
       dDeaths: sel.deaths != null ? String(sel.deaths) : '', dInj: sel.inj != null ? String(sel.inj) : '',
-      dWeather: sel.weather || '', dCause: sel.cause || '尚未發現肇事因素',
-      dRoad: (sel.county ? sel.county : '') + (sel.road ? (' ' + sel.road) : '') || '—',
-      dLoc: sel.locType || '—',
-      dParties: s.selected ? this.partiesOf(sel).map((p, i) => ({
-        idx: String(i + 1),
-        veh: p.veh || '不明',
-        info: (p.gender && p.gender !== '不明' ? p.gender : '性別不明') + ' · ' + ((p.age != null && p.age !== 255) ? (p.age + ' 歲') : '年齡不明')
-      })) : [],
+      dWeather: tr(sel.weather || '') || '—',
+      dCause: sel.cause || '尚未發現肇事因素',
+      dRoad: (sel.county ? tr(sel.county) : '') + (sel.road ? (' ' + sel.road) : '') || '—',
+      dLoc: tr(sel.locType || '') || '—',
+      dParties: s.selected ? this.partiesOf(sel).map((p, i) => {
+        const vehLabel = tr(p.veh || '') || (zh ? '不明' : 'Unknown');
+        const genderLabel = (p.gender && p.gender !== '不明') ? tr(p.gender) : (zh ? '性別不明' : 'Unk. gender');
+        const ageLabel = (p.age != null && p.age !== 255) ? (p.age + (zh ? ' 歲' : ' yrs')) : (zh ? '年齡不明' : 'Unk. age');
+        return { idx: String(i + 1), veh: vehLabel, info: genderLabel + ' · ' + ageLabel };
+      }) : [],
       dPartyCount: s.selected ? String(this.partiesOf(sel).length) : '0',
       dYear: sel.year || ''
     };
