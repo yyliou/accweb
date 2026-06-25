@@ -908,7 +908,7 @@ class Component extends DCLogic {
           const hot = bh && bh.type==='monthly' && bh.idx===i;
           return {
             hA1:(a1[i]/mx*100).toFixed(1)+'%', hA2:(a2[i]/mx*100).toFixed(1)+'%',
-            bgA1: hot ? '#e8922a' : '#7a2e16', bgA2: hot ? '#c47a18' : '#5a3d0e',
+            bgA1: hot ? '#f59e2e' : '#3a3a3e', bgA2: hot ? '#fbbf24' : '#28282c',
             label:zh?MZ[i]:ME[i], n:v,
             onEnter:e=>this.setState({chartTip:{label:zh?MZ[i]:ME[i],a1:a1[i],a2:a2[i],cx:e.clientX,cy:e.clientY}, barHover:{type:'monthly',idx:i}}),
             onLeave:()=>this.setState({chartTip:null, barHover:null})
@@ -924,7 +924,7 @@ class Component extends DCLogic {
           const hot = bh && bh.type==='hourly' && bh.idx===i;
           return {
             hA1:(a1[i]/mx*100).toFixed(1)+'%', hA2:(a2[i]/mx*100).toFixed(1)+'%',
-            bgA1: hot ? '#e8922a' : '#7a2e16', bgA2: hot ? '#c47a18' : '#5a3d0e',
+            bgA1: hot ? '#f59e2e' : '#3a3a3e', bgA2: hot ? '#fbbf24' : '#28282c',
             label:i%4===0?String(i).padStart(2,'0'):'', n:v,
             onEnter:e=>this.setState({chartTip:{label:String(i).padStart(2,'0')+'–'+String((i+1)%24).padStart(2,'0')+(zh?'時':'h'),a1:a1[i],a2:a2[i],cx:e.clientX,cy:e.clientY}, barHover:{type:'hourly',idx:i}}),
             onLeave:()=>this.setState({chartTip:null, barHover:null})
