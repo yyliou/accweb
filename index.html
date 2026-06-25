@@ -76,7 +76,7 @@
   </div>
 
   <!-- Trends overlay page -->
-  <div style="position:absolute;top:64px;left:0;right:0;bottom:0;overflow-y:auto;background:#0a0a0c;z-index:1000;display:{{ trendsDisplay }};flex-direction:column">
+  <div style="position:fixed;top:64px;left:0;right:0;bottom:0;overflow-y:auto;background:#0a0a0c;z-index:1000;display:{{ trendsDisplay }};flex-direction:column">
     <div class="cc-tpad" style="max-width:1080px;margin:0 auto;padding:56px 60px 80px;width:100%;box-sizing:border-box">
 
       <!-- Lead -->
@@ -169,7 +169,7 @@
   </div>
 
   <!-- Research overlay page -->
-  <div style="position:absolute;top:64px;left:0;right:0;bottom:0;overflow-y:auto;background:#0a0a0c;z-index:1000;display:{{ researchDisplay }}">
+  <div style="position:fixed;top:64px;left:0;right:0;bottom:0;overflow-y:auto;background:#0a0a0c;z-index:1000;display:{{ researchDisplay }}">
     <div style="max-width:820px;margin:0 auto;padding:60px 48px 80px">
       <div style="font:500 11px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:3px;margin-bottom:10px">Yu-You Liou · 劉昱佑</div>
       <div style="font:700 28px 'Space Grotesk';color:#f2f2f4;margin-bottom:10px">{{ T.researchTitle }}</div>
@@ -280,7 +280,7 @@
     </div>
 
     <!-- right map -->
-    <div class="cc-map" style="flex:1;position:relative;min-width:0;background:#0a0a0c">
+    <div class="cc-map" style="flex:1;position:relative;min-width:0;background:#0a0a0c;visibility:{{ mapVis }}">
       <div id="map" style="position:absolute;inset:0"></div>
 
       <div id="ccload" style="position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;background:#0a0a0c;transition:opacity .5s">
@@ -901,6 +901,7 @@ class Component extends DCLogic {
       trendsTabBd: s.page==='trends'?'#3a1a10':'transparent', mapTabBd: s.page==='map'?'#3a1a10':'transparent', researchTabBd: s.page==='research'?'#3a1a10':'transparent',
       trendsDisplay: s.page==='trends'?'flex':'none',
       researchDisplay: s.page==='research'?'block':'none',
+      mapVis: s.page==='map'?'visible':'hidden',
       // trend chart data
       trendsDeathsFmt: (this.td||{}).totalDeaths ? (this.td.totalDeaths).toLocaleString('en-US') : '—',
       trendsInjFmt: (this.td||{}).totalInj ? (this.td.totalInj).toLocaleString('en-US') : '—',
