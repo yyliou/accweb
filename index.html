@@ -883,15 +883,15 @@ class Component extends DCLogic {
         yearTitle: zh ? '年度事故件數' : 'Accidents by year',
         trendSub: (()=>{ const td=this.td||{}; const yrs=td.years||[]; const mn=yrs.length?yrs[0].year:2025; const mx=yrs.length?yrs[yrs.length-1].year:2025; return zh?(yrs.length>1?`${mn}–${mx} · 全台累計`:`${mn} · 全台`):(yrs.length>1?`${mn}–${mx} · Taiwan`:`${mn} · Taiwan`); })(),
         researchTitle: zh ? '相關研究' : 'Related Research',
-        researchDesc: zh ? '以下兩篇論文利用臺灣交通部道路交通事故資料庫進行因果推論研究。' : 'The following papers use Taiwan\'s Traffic Accident Database for causal analysis.',
+        researchDesc: zh ? '以下兩篇論文利用內政部警政署道路交通事故開放資料進行因果推論研究。' : 'The following papers use Taiwan\'s National Police Agency Road Traffic Accident Database for causal analysis.',
         trendVehTitle: zh ? '車種別事故分布' : 'Accidents by vehicle type',
         trendCountyTitle: zh ? '縣市別事故數' : 'Accidents by county',
         paper1Abstract: zh
-          ? '以臺南市機車待轉取消政策為準自然實驗，使用差異中斷設計（difference-in-discontinuity）估計政策效果。發現取消待轉使事故件數減少 21%、受害者人數減少 19%，機車（−26%）降幅大於汽車（−18%），醫療費用估計減少 4.7%。'
-          : 'Using the removal of hook-turn regulation in Tainan City as a quasi-natural experiment, this paper applies a difference-in-discontinuity design. The policy reform reduced accident cases by 21% and victims by 19%, with larger reductions for motorcycles (−26%) than automobiles (−18%), and an estimated 4.7% decrease in medical expenditures.',
+          ? '本研究利用臺南市取消部分地區強制機車兩段式左轉的政策變革，檢驗其對交通安全的影響。結果顯示，政策實施後交通事故、受傷人數及涉事車輛數量皆明顯下降，其中以機車事故和受傷事故的改善最為顯著。效果在市區及交通尖峰時段尤其明顯。'
+          : 'This paper studies a policy reform in Tainan that removed the hook-turn requirement for motorcycles at selected intersections. The results show that traffic accidents, injuries, and vehicles involved in crashes all declined after the reform, particularly for injury-related crashes and motorcycle accidents. The safety benefits are strongest in urban areas and during peak traffic hours.',
         paper2Abstract: zh
-          ? '以大甲媽祖遶境為案例，使用差異中差法（difference-in-differences, DiD）分析宗教進香活動對道路安全的影響。發現遶境期間非致命性傷亡事故顯著增加，勞動生產力損失與醫療費用合計佔社會總交通事故成本的 6.3%。'
-          : 'Using the Dajia Mazu Pilgrimage as a natural experiment, this paper applies difference-in-differences (DiD) to examine the causal impact on traffic accidents. The pilgrimage significantly increased non-fatal injury accidents, with combined productivity losses and medical expenses accounting for 6.3% of total traffic accident costs.',
+          ? '本研究探討大甲媽祖遶境是否會增加交通事故。利用臺灣交通事故資料進行分析後發現，遶境期間受影響地區的受傷事故明顯增加，而且在媽祖鑾轎經過時增幅最大。研究認為，大量湧入的人車流量是事故增加的主要原因。'
+          : 'The study examines whether Taiwan\'s Dajia Mazu Pilgrimage increases traffic accidents. Using accident records and a difference-in-differences approach, the authors find that injury-related crashes rise substantially during the event, especially when the Mazu palanquin passes through a township. Increased traffic flow appears to be the main reason behind the higher accident risk.',
       }), Tv,
       // page nav
       goTrends: () => this.setState({ page: 'trends' }),
