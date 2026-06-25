@@ -111,9 +111,8 @@
             <sc-for list="{{ topVehBars }}" as="b" hint-placeholder-count="4">
               <div onMouseEnter="{{ b.onEnter }}" onMouseLeave="{{ b.onLeave }}" style="cursor:default">
                 <div style="display:flex;justify-content:space-between;font:500 12px 'Noto Sans TC';color:#cfcfd6;margin-bottom:5px"><span>{{ b.label }}</span><span style="font-family:'IBM Plex Mono';color:#ff8a5c">{{ b.count }}</span></div>
-                <div style="height:5px;border-radius:2px;background:#19130f;position:relative;overflow:hidden">
-                  <div style="position:absolute;left:0;top:0;height:100%;border-radius:2px 0 0 2px;background:{{ b.bgA1 }};width:{{ b.wA1 }};transition:background .15s"></div>
-                  <div style="position:absolute;left:{{ b.wA1 }};top:0;height:100%;background:{{ b.bgA2 }};width:{{ b.wA2 }};transition:background .15s"></div>
+                <div style="height:5px;border-radius:2px;background:#111">
+                  <div style="height:100%;border-radius:2px;background:{{ b.grad }};width:{{ b.wTotal }};transition:background .2s"></div>
                 </div>
               </div>
             </sc-for>
@@ -125,9 +124,8 @@
             <sc-for list="{{ topCountyBars }}" as="b" hint-placeholder-count="5">
               <div onMouseEnter="{{ b.onEnter }}" onMouseLeave="{{ b.onLeave }}" style="cursor:default">
                 <div style="display:flex;justify-content:space-between;font:500 12px 'Noto Sans TC';color:#cfcfd6;margin-bottom:5px"><span>{{ b.label }}</span><span style="font-family:'IBM Plex Mono';color:#ff8a5c">{{ b.count }}</span></div>
-                <div style="height:5px;border-radius:2px;background:#19130f;position:relative;overflow:hidden">
-                  <div style="position:absolute;left:0;top:0;height:100%;border-radius:2px 0 0 2px;background:{{ b.bgA1 }};width:{{ b.wA1 }};transition:background .15s"></div>
-                  <div style="position:absolute;left:{{ b.wA1 }};top:0;height:100%;background:{{ b.bgA2 }};width:{{ b.wA2 }};transition:background .15s"></div>
+                <div style="height:5px;border-radius:2px;background:#111">
+                  <div style="height:100%;border-radius:2px;background:{{ b.grad }};width:{{ b.wTotal }};transition:background .2s"></div>
                 </div>
               </div>
             </sc-for>
@@ -142,8 +140,8 @@
           <div style="display:flex;height:100px;align-items:flex-end;gap:4px">
             <sc-for list="{{ monthlyBars }}" as="b" hint-placeholder-count="12">
               <div onMouseEnter="{{ b.onEnter }}" onMouseLeave="{{ b.onLeave }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:0;height:100%;justify-content:flex-end;cursor:crosshair">
-                <div style="width:100%;border-radius:2px 2px 0 0;height:{{ b.hA2 }};background:{{ b.bgA2 }};opacity:.9;transition:background .15s"></div>
-                <div style="width:100%;height:{{ b.hA1 }};background:{{ b.bgA1 }};opacity:1;transition:background .15s"></div>
+                <div style="width:100%;border-radius:2px 2px 0 0;height:{{ b.hA2 }};background:{{ b.bgA2 }};transition:background .15s"></div>
+                <div style="width:100%;height:{{ b.hA1 }};background:{{ b.bgA1 }};transition:background .15s"></div>
                 <div style="font:500 9px 'IBM Plex Mono';color:#6c6c74;margin-top:4px">{{ b.label }}</div>
               </div>
             </sc-for>
@@ -154,8 +152,8 @@
           <div style="display:flex;height:100px;align-items:flex-end;gap:2px">
             <sc-for list="{{ hourlyBars }}" as="b" hint-placeholder-count="24">
               <div onMouseEnter="{{ b.onEnter }}" onMouseLeave="{{ b.onLeave }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:0;height:100%;justify-content:flex-end;cursor:crosshair">
-                <div style="width:100%;height:{{ b.hA2 }};background:{{ b.bgA2 }};opacity:.9;transition:background .15s"></div>
-                <div style="width:100%;height:{{ b.hA1 }};background:{{ b.bgA1 }};opacity:1;transition:background .15s"></div>
+                <div style="width:100%;height:{{ b.hA2 }};background:{{ b.bgA2 }};transition:background .15s"></div>
+                <div style="width:100%;height:{{ b.hA1 }};background:{{ b.bgA1 }};transition:background .15s"></div>
                 <div style="font:500 8px 'IBM Plex Mono';color:#6c6c74;margin-top:3px">{{ b.label }}</div>
               </div>
             </sc-for>
@@ -910,7 +908,7 @@ class Component extends DCLogic {
           const hot = bh && bh.type==='monthly' && bh.idx===i;
           return {
             hA1:(a1[i]/mx*100).toFixed(1)+'%', hA2:(a2[i]/mx*100).toFixed(1)+'%',
-            bgA1: hot ? '#f59e2e' : '#ff5a3c', bgA2: hot ? '#fbbf24' : '#f59e2e',
+            bgA1: hot ? '#e8922a' : '#7a2e16', bgA2: hot ? '#c47a18' : '#5a3d0e',
             label:zh?MZ[i]:ME[i], n:v,
             onEnter:e=>this.setState({chartTip:{label:zh?MZ[i]:ME[i],a1:a1[i],a2:a2[i],cx:e.clientX,cy:e.clientY}, barHover:{type:'monthly',idx:i}}),
             onLeave:()=>this.setState({chartTip:null, barHover:null})
@@ -926,7 +924,7 @@ class Component extends DCLogic {
           const hot = bh && bh.type==='hourly' && bh.idx===i;
           return {
             hA1:(a1[i]/mx*100).toFixed(1)+'%', hA2:(a2[i]/mx*100).toFixed(1)+'%',
-            bgA1: hot ? '#f59e2e' : '#ff5a3c', bgA2: hot ? '#fbbf24' : '#f59e2e',
+            bgA1: hot ? '#e8922a' : '#7a2e16', bgA2: hot ? '#c47a18' : '#5a3d0e',
             label:i%4===0?String(i).padStart(2,'0'):'', n:v,
             onEnter:e=>this.setState({chartTip:{label:String(i).padStart(2,'0')+'–'+String((i+1)%24).padStart(2,'0')+(zh?'時':'h'),a1:a1[i],a2:a2[i],cx:e.clientX,cy:e.clientY}, barHover:{type:'hourly',idx:i}}),
             onLeave:()=>this.setState({chartTip:null, barHover:null})
@@ -1028,8 +1026,8 @@ class Component extends DCLogic {
           ...hitAreas, hoverLine, ...iDots, ...dDots, ...yearLbls
         );
       })(),
-      topVehBars: (()=>{ const td=this.td||{}; const tv=td.topVeh||[]; const mx=Math.max(1,...tv.map(([,c])=>c)); const bh=s.barHover; return tv.map(([name,count],i)=>{ const a1=(td.vehA1&&td.vehA1[name])||0, a2=(td.vehA2&&td.vehA2[name])||0; const hot=bh&&bh.type==='veh'&&bh.idx===i; return {label:tr(name)||name, count:count.toLocaleString('en-US'), wA1:(a1/mx*100).toFixed(1)+'%', wA2:(a2/mx*100).toFixed(1)+'%', bgA1:hot?'#f59e2e':'#ff5a3c', bgA2:hot?'#fbbf24':'#f59e2e', a1, a2, onEnter:e=>this.setState({chartTip:{label:tr(name)||name,a1,a2,cx:e.clientX,cy:e.clientY},barHover:{type:'veh',idx:i}}), onLeave:()=>this.setState({chartTip:null,barHover:null})}; }); })(),
-      topCountyBars: (()=>{ const td=this.td||{}; const tc=td.topCounty||[]; const mx=Math.max(1,...tc.map(([,c])=>c)); const bh=s.barHover; return tc.map(([name,count],i)=>{ const a1=(td.countyA1&&td.countyA1[name])||0, a2=(td.countyA2&&td.countyA2[name])||0; const hot=bh&&bh.type==='county'&&bh.idx===i; return {label:tr(name)||name, count:count.toLocaleString('en-US'), wA1:(a1/mx*100).toFixed(1)+'%', wA2:(a2/mx*100).toFixed(1)+'%', bgA1:hot?'#f59e2e':'#ff5a3c', bgA2:hot?'#fbbf24':'#f59e2e', a1, a2, onEnter:e=>this.setState({chartTip:{label:tr(name)||name,a1,a2,cx:e.clientX,cy:e.clientY},barHover:{type:'county',idx:i}}), onLeave:()=>this.setState({chartTip:null,barHover:null})}; }); })(),
+      topVehBars: (()=>{ const td=this.td||{}; const tv=td.topVeh||[]; const mx=Math.max(1,...tv.map(([,c])=>c)); const bh=s.barHover; return tv.map(([name,count],i)=>{ const a1=(td.vehA1&&td.vehA1[name])||0, a2=(td.vehA2&&td.vehA2[name])||0; const hot=bh&&bh.type==='veh'&&bh.idx===i; const wTotal=(count/mx*100).toFixed(1)+'%'; const grad=hot?'linear-gradient(90deg,#f59e2e 0%,#fbbf24 60%,rgba(251,191,36,0.25) 100%)':'linear-gradient(90deg,#d63a1e 0%,#ff5a3c 35%,rgba(245,130,60,0.5) 75%,rgba(245,130,60,0.08) 100%)'; return {label:tr(name)||name, count:count.toLocaleString('en-US'), wTotal, grad, a1, a2, onEnter:e=>this.setState({chartTip:{label:tr(name)||name,a1,a2,cx:e.clientX,cy:e.clientY},barHover:{type:'veh',idx:i}}), onLeave:()=>this.setState({chartTip:null,barHover:null})}; }); })(),
+      topCountyBars: (()=>{ const td=this.td||{}; const tc=td.topCounty||[]; const mx=Math.max(1,...tc.map(([,c])=>c)); const bh=s.barHover; return tc.map(([name,count],i)=>{ const a1=(td.countyA1&&td.countyA1[name])||0, a2=(td.countyA2&&td.countyA2[name])||0; const hot=bh&&bh.type==='county'&&bh.idx===i; const wTotal=(count/mx*100).toFixed(1)+'%'; const grad=hot?'linear-gradient(90deg,#f59e2e 0%,#fbbf24 60%,rgba(251,191,36,0.25) 100%)':'linear-gradient(90deg,#d63a1e 0%,#ff5a3c 35%,rgba(245,130,60,0.5) 75%,rgba(245,130,60,0.08) 100%)'; return {label:tr(name)||name, count:count.toLocaleString('en-US'), wTotal, grad, a1, a2, onEnter:e=>this.setState({chartTip:{label:tr(name)||name,a1,a2,cx:e.clientX,cy:e.clientY},barHover:{type:'county',idx:i}}), onLeave:()=>this.setState({chartTip:null,barHover:null})}; }); })(),
       trendNarrative: (()=>{
         const td=this.td||{}; const yrs=td.years||[];
         if(!yrs.length) return '';
