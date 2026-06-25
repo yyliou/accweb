@@ -394,7 +394,7 @@ class Component extends DCLogic {
     const DOW = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
     for (const d of base) {
       if (d.weather) wB[d.weather] = (wB[d.weather] || 0) + 1;
-      if (d.age != null && d.age !== 255) { ageN++; const band = Math.min(90, Math.floor(d.age / 10) * 10); ageB[band] = (ageB[band] || 0) + 1; }
+      if (d.age != null && d.age !== 255 && d.age >= 1 && d.age <= 100) { ageN++; const band = Math.min(90, Math.floor(d.age / 10) * 10); ageB[band] = (ageB[band] || 0) + 1; }
       if (d.locType) lc[d.locType] = (lc[d.locType] || 0) + 1;
       const h = Math.floor(d.hr || 0); hrB[h] = (hrB[h] || 0) + 1;
       const w = new Date(d.year || 2018, (d.mo || 1) - 1, d.d || 1).getDay();
@@ -1092,7 +1092,7 @@ class Component extends DCLogic {
       dParties: s.selected ? this.partiesOf(sel).map((p, i) => {
         const vehLabel = tr(p.veh || '') || (zh ? '不明' : 'Unknown');
         const genderLabel = (p.gender && p.gender !== '不明') ? tr(p.gender) : (zh ? '性別不明' : 'Unk. gender');
-        const ageLabel = (p.age != null && p.age !== 255) ? (p.age + (zh ? ' 歲' : ' yrs')) : (zh ? '年齡不明' : 'Unk. age');
+        const ageLabel = (p.age != null && p.age !== 255 && p.age >= 1 && p.age <= 100) ? (p.age + (zh ? ' 歲' : ' yrs')) : (zh ? '年齡不明' : 'Unk. age');
         return { idx: String(i + 1), veh: vehLabel, info: genderLabel + ' · ' + ageLabel };
       }) : [],
       dPartyCount: s.selected ? String(this.partiesOf(sel).length) : '0',
