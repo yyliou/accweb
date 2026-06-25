@@ -430,21 +430,40 @@ class Component extends DCLogic {
       const meta = await (await fetch('data/meta.json')).json();
       this.meta = meta; const cb = meta.codebooks || {};
       this.cb = cb; this.pools = [];
-      const recs = [];
-      for (const file of meta.files) {
-        const buf = await (await fetch('data/' + file.path)).arrayBuffer();
-        this.decodeBin(buf, file.count, cb, recs, file.year, file.partyCount || 0);
-      }
-      recs.sort((a, b) => a.doy - b.doy);
-      this.years = [...new Set(meta.files.map(f => f.year))].sort((a, b) => a - b);
-      console.log('loaded binary rows:', recs.length, 'years:', this.years.join(','));
-      return recs;
+      const yrs = [...new Set(meta.files.map(f => f.year))].sort((a, b) => a - b);
+      this.years = yrs;
+      const latestYear = yrs[yrs.length - 1];
+      // Commit years to state first so applyFilters can filter by year
+      await new Promise(resolve => this.setState({ years: yrs.map(String), year: latestYear }, resolve));
+      this.records = [];
+      let loaded = 0; const total = meta.files.length;
+      // Fetch ALL binary files in parallel; render map as each one arrives
+      await Promise.all(meta.files.map(f =>
+        fetch('data/' + f.path)
+          .then(r => r.arrayBuffer())
+          .then(buf => {
+            const chunk = [];
+            this.decodeBin(buf, f.count, cb, chunk, f.year, f.partyCount || 0);
+            for (const r of chunk) this.records.push(r);
+            this.records.sort((a, b) => a.doy - b.doy);
+            loaded++;
+            this.buildTrends(); this.buildCountyList(); this.applyFilters();
+            if (loaded === total) this.hideLoader();
+          })
+      ));
+      console.log('loaded binary rows:', this.records.length, 'years:', this.years.join(','));
+      return this.records;
     } catch (e) {
       try {
         const recs = await (await fetch('data/accidents-sample.json')).json();
         recs.forEach(r => { if (r.year == null) r.year = 2018; });
         recs.sort((a, b) => a.doy - b.doy);
         this.years = [...new Set(recs.map(r => r.year))].sort((a, b) => a - b);
+        this.records = recs;
+        const latestYear = this.years[this.years.length - 1];
+        await new Promise(resolve => this.setState({ years: this.years.map(String), year: latestYear }, resolve));
+        this.buildTrends(); this.buildCountyList(); this.applyFilters();
+        this.hideLoader();
         return recs;
       } catch (e2) { console.warn('no data source', e2); return []; }
     }
@@ -514,11 +533,12 @@ class Component extends DCLogic {
   }
 
   async init() {
-    this.records = await this.loadData();
-    const yrs = (this.years && this.years.length) ? this.years : [2018];
-    const latestYear = yrs[yrs.length - 1];
-    this.buildTrends();
-    this.buildCountyList();
+    // Register Service Worker for cache-first binary loading (huge speed win on repeat visits)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
+    // Init map BEFORE loading data so basemap renders immediately
     const map = new maplibregl.Map({
       container: 'map',
       style: 'https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json',
@@ -530,21 +550,12 @@ class Component extends DCLogic {
     const overlay = new deck.MapboxOverlay({ interleaved: false, pickingRadius: 9, layers: [] });
     map.addControl(overlay);
     this.overlay = overlay;
-    // re-render points on zoom so meter-radius + alpha both update
     map.on('zoom', () => { if (this.slice) this.updateLayers(this.slice); });
-    // click empty map area → close any open detail card
     map.on('click', (e) => {
       const picked = overlay.pickObject({ x: e.point.x, y: e.point.y, radius: 9, layerIds: ['core'] });
       if (!picked) this.closeDetail();
     });
-    // Render data as soon as the overlay exists — don't wait on basemap tiles,
-    // so a slow/blocked basemap can never leave the dashboard blank.
     map.fitBounds([[119.4, 21.85], [122.05, 25.4]], { padding: 48, duration: 0 });
-    // setState is async — use callback so year is committed before applyFilters reads it
-    this.setState({ years: yrs.map(String), year: latestYear }, () => {
-      this.applyFilters();
-      this.hideLoader();
-    });
     map.on('load', () => {
       try {
         const layers = map.getStyle().layers || [];
@@ -556,8 +567,10 @@ class Component extends DCLogic {
       } catch (e) {}
       this.hideLoader();
     });
-    // safety net: never let the loader linger
     setTimeout(() => this.hideLoader(), 2500);
+
+    // Load data progressively — map already visible while data streams in
+    await this.loadData();
   }
 
   buildTrends() {
