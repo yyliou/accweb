@@ -158,7 +158,6 @@ This dataset underlies the following peer-reviewed publications:
 
 ## Acknowledgements
 
-<<<<<<< HEAD
 Traffic accident microdata provided by the **Taiwan National Police Agency (內政部警政署)** through the Government Open Data Platform. Map tiles by **CARTO**; © **OpenStreetMap** contributors. Visualization built with [deck.gl](https://deck.gl) and [MapLibre GL JS](https://maplibre.org).
 
 ---
@@ -167,6 +166,3 @@ Traffic accident microdata provided by the **Taiwan National Police Agency (內�
 
 Source code: MIT.  
 Data: subject to the [Government Open Data License](https://data.gov.tw/license).
-=======
-Traffic accident data provided by the **Taiwan National Police Agency (內政部警政署)** through the Government Open Data Platform. Map tiles by **CARTO**; © **OpenStreetMap** contributors. Visualization built with [deck.gl](https://deck.gl) and [MapLibre GL JS](https://maplibre.org).
->>>>>>> 747b677ff44c7db20e43bcf945e5b068a8f16091
