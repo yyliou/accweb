@@ -138,10 +138,3 @@ This dataset underlies the following peer-reviewed publications:
 ## Acknowledgements
 
 Traffic accident data provided by the **Taiwan National Police Agency (內政部警政署)** through the Government Open Data Platform. Map tiles by **CARTO**; © **OpenStreetMap** contributors. Visualization built with [deck.gl](https://deck.gl) and [MapLibre GL JS](https://maplibre.org).
-
----
-
-## License
-
-Source code: MIT.  
-Data: subject to the original [Government Open Data License](https://data.gov.tw/license).
