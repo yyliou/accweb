@@ -59,6 +59,8 @@
 
 <div style="position:relative;width:100%;height:100vh;min-height:600px;background:#0a0a0c;font-family:'Noto Sans TC',sans-serif;display:flex;flex-direction:column;overflow:hidden">
 
+  {{ chartTooltip }}
+
   <!-- top bar -->
   <div class="cc-header" style="flex:none;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid #161618;z-index:30">
     <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;letter-spacing:.2px">{{ T.title }}<span style="color:#ff5a3c">.</span></div>
@@ -82,7 +84,7 @@
       <div class="cc-tlead" style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px;align-items:end;margin-bottom:28px">
         <div>
           <div style="font:900 88px 'Space Grotesk';color:#ff5f48;line-height:.82;letter-spacing:-2.5px">{{ trendsDeathsFmt }}</div>
-          <div style="font:500 15px 'Noto Sans TC';color:#9a9aa2;margin-top:12px">{{ T.deaths }}</div>
+          <div style="font:500 15px 'Noto Sans TC';color:#c98a82;margin-top:12px">{{ T.deaths }}</div>
         </div>
         <div class="cc-tlead-inj">
           <div style="font:900 60px 'Space Grotesk';color:#f0f0f3;line-height:.82;letter-spacing:-1.5px">{{ trendsInjFmt }}</div>
@@ -96,7 +98,9 @@
       <!-- year trend — always visible -->
       <div style="margin-bottom:56px">
         <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:20px">{{ T.yearTitle }}</div>
-        <div class="cc-tchart" style="width:100%;overflow-x:auto">{{ trendLineChart }}</div>
+        <div class="cc-tchart" style="width:100%;overflow-x:auto">
+          {{ trendLineChart }}
+        </div>
       </div>
 
       <!-- vehicle + county side-by-side -->
@@ -105,9 +109,12 @@
           <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:18px">{{ T.trendVehTitle }}</div>
           <div style="display:flex;flex-direction:column;gap:10px">
             <sc-for list="{{ topVehBars }}" as="b" hint-placeholder-count="4">
-              <div>
+              <div onMouseEnter="{{ b.onEnter }}" onMouseLeave="{{ b.onLeave }}" style="cursor:default">
                 <div style="display:flex;justify-content:space-between;font:500 12px 'Noto Sans TC';color:#cfcfd6;margin-bottom:5px"><span>{{ b.label }}</span><span style="font-family:'IBM Plex Mono';color:#ff8a5c">{{ b.count }}</span></div>
-                <div style="height:4px;border-radius:2px;background:#19130f"><div style="height:100%;border-radius:2px;background:#ff5a3c;width:{{ b.w }}"></div></div>
+                <div style="height:5px;border-radius:2px;background:#19130f;position:relative;overflow:hidden">
+                  <div style="position:absolute;left:0;top:0;height:100%;border-radius:2px 0 0 2px;background:{{ b.bgA1 }};width:{{ b.wA1 }};transition:background .15s"></div>
+                  <div style="position:absolute;left:{{ b.wA1 }};top:0;height:100%;background:{{ b.bgA2 }};width:{{ b.wA2 }};transition:background .15s"></div>
+                </div>
               </div>
             </sc-for>
           </div>
@@ -116,9 +123,12 @@
           <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:18px">{{ T.trendCountyTitle }}</div>
           <div style="display:flex;flex-direction:column;gap:10px">
             <sc-for list="{{ topCountyBars }}" as="b" hint-placeholder-count="5">
-              <div>
+              <div onMouseEnter="{{ b.onEnter }}" onMouseLeave="{{ b.onLeave }}" style="cursor:default">
                 <div style="display:flex;justify-content:space-between;font:500 12px 'Noto Sans TC';color:#cfcfd6;margin-bottom:5px"><span>{{ b.label }}</span><span style="font-family:'IBM Plex Mono';color:#ff8a5c">{{ b.count }}</span></div>
-                <div style="height:4px;border-radius:2px;background:#19130f"><div style="height:100%;border-radius:2px;background:#ff5a3c;width:{{ b.w }}"></div></div>
+                <div style="height:5px;border-radius:2px;background:#19130f;position:relative;overflow:hidden">
+                  <div style="position:absolute;left:0;top:0;height:100%;border-radius:2px 0 0 2px;background:{{ b.bgA1 }};width:{{ b.wA1 }};transition:background .15s"></div>
+                  <div style="position:absolute;left:{{ b.wA1 }};top:0;height:100%;background:{{ b.bgA2 }};width:{{ b.wA2 }};transition:background .15s"></div>
+                </div>
               </div>
             </sc-for>
           </div>
@@ -131,9 +141,10 @@
           <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:18px">{{ T.monthlyTitle }}</div>
           <div style="display:flex;height:100px;align-items:flex-end;gap:4px">
             <sc-for list="{{ monthlyBars }}" as="b" hint-placeholder-count="12">
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end">
-                <div style="width:100%;border-radius:2px 2px 0 0;height:{{ b.h }};background:#ff5a3c;opacity:.8"></div>
-                <div style="font:500 9px 'IBM Plex Mono';color:#6c6c74">{{ b.label }}</div>
+              <div onMouseEnter="{{ b.onEnter }}" onMouseLeave="{{ b.onLeave }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:0;height:100%;justify-content:flex-end;cursor:crosshair">
+                <div style="width:100%;border-radius:2px 2px 0 0;height:{{ b.hA2 }};background:{{ b.bgA2 }};opacity:.9;transition:background .15s"></div>
+                <div style="width:100%;height:{{ b.hA1 }};background:{{ b.bgA1 }};opacity:1;transition:background .15s"></div>
+                <div style="font:500 9px 'IBM Plex Mono';color:#6c6c74;margin-top:4px">{{ b.label }}</div>
               </div>
             </sc-for>
           </div>
@@ -142,9 +153,10 @@
           <div style="font:600 11px 'IBM Plex Mono';color:#55555e;letter-spacing:1.5px;margin-bottom:18px">{{ T.hourlyTitle }}</div>
           <div style="display:flex;height:100px;align-items:flex-end;gap:2px">
             <sc-for list="{{ hourlyBars }}" as="b" hint-placeholder-count="24">
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end">
-                <div style="width:100%;border-radius:1px;height:{{ b.h }};background:#ff5a3c;opacity:.75"></div>
-                <div style="font:500 8px 'IBM Plex Mono';color:#6c6c74">{{ b.label }}</div>
+              <div onMouseEnter="{{ b.onEnter }}" onMouseLeave="{{ b.onLeave }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:0;height:100%;justify-content:flex-end;cursor:crosshair">
+                <div style="width:100%;height:{{ b.hA2 }};background:{{ b.bgA2 }};opacity:.9;transition:background .15s"></div>
+                <div style="width:100%;height:{{ b.hA1 }};background:{{ b.bgA1 }};opacity:1;transition:background .15s"></div>
+                <div style="font:500 8px 'IBM Plex Mono';color:#6c6c74;margin-top:3px">{{ b.label }}</div>
               </div>
             </sc-for>
           </div>
@@ -362,7 +374,7 @@ class Component extends DCLogic {
     locTop: '—', locPct: '—', peakHour: '—', peakHourPct: '—',
     peakDow: '—', peakDowPct: '—', topGender: '—', topGenderPct: '—',
     perDay: '—', year: null, years: ['—'], county: '', countyList: [], lang: 'zh',
-    page: 'trends'
+    page: 'trends', chartTip: null, chartHoverQ: null, barHover: null
   };
 
   // top roads / top causes for the current filter set (computed once per filter change)
@@ -576,21 +588,36 @@ class Component extends DCLogic {
   buildTrends() {
     const recs = this.records || [];
     const monthly = Array(12).fill(0), hourly = Array(24).fill(0);
+    const monthlyA1 = Array(12).fill(0), monthlyA2 = Array(12).fill(0);
+    const hourlyA1 = Array(24).fill(0), hourlyA2 = Array(24).fill(0);
     const yearMap = {}, vehMap = {}, countyMap = {}, qMap = {};
+    const vehA1 = {}, vehA2 = {}, countyA1 = {}, countyA2 = {};
     for (const r of recs) {
-      monthly[(r.mo||1)-1]++; hourly[r.hr||0]++;
+      const mo = (r.mo||1)-1, hr = r.hr||0;
+      monthly[mo]++; hourly[hr]++;
+      const isA1 = r.sev === 'A1';
+      if (isA1) { monthlyA1[mo]++; hourlyA1[hr]++; } else { monthlyA2[mo]++; hourlyA2[hr]++; }
       const y = r.year;
       if (!yearMap[y]) yearMap[y] = { year: y, acc: 0, deaths: 0, inj: 0 };
       yearMap[y].acc++; yearMap[y].deaths += r.deaths||0; yearMap[y].inj += r.inj||0;
-      if (r.veh) vehMap[r.veh] = (vehMap[r.veh]||0)+1;
-      if (r.county) countyMap[r.county] = (countyMap[r.county]||0)+1;
-      const q = Math.floor(((r.mo||1)-1)/3)+1;
+      if (r.veh) {
+        vehMap[r.veh] = (vehMap[r.veh]||0)+1;
+        if (isA1) vehA1[r.veh] = (vehA1[r.veh]||0)+1;
+        else vehA2[r.veh] = (vehA2[r.veh]||0)+1;
+      }
+      if (r.county) {
+        countyMap[r.county] = (countyMap[r.county]||0)+1;
+        if (isA1) countyA1[r.county] = (countyA1[r.county]||0)+1;
+        else countyA2[r.county] = (countyA2[r.county]||0)+1;
+      }
+      const q = Math.floor(mo/3)+1;
       const qk = `${y}-Q${q}`;
       if (!qMap[qk]) qMap[qk] = {year:y, q, acc:0, deaths:0, inj:0};
       qMap[qk].acc++; qMap[qk].deaths += r.deaths||0; qMap[qk].inj += r.inj||0;
     }
     this.td = {
-      monthly, hourly,
+      monthly, hourly, monthlyA1, monthlyA2, hourlyA1, hourlyA2,
+      vehA1, vehA2, countyA1, countyA2,
       years: Object.values(yearMap).sort((a,b)=>a.year-b.year),
       quarters: Object.values(qMap).sort((a,b)=>a.year!==b.year?a.year-b.year:a.q-b.q),
       topVeh: Object.entries(vehMap).sort((a,b)=>b[1]-a[1]).slice(0,5),
@@ -872,9 +899,65 @@ class Component extends DCLogic {
       trendsDeathsFmt: (this.td||{}).totalDeaths ? (this.td.totalDeaths).toLocaleString('en-US') : '—',
       trendsInjFmt: (this.td||{}).totalInj ? (this.td.totalInj).toLocaleString('en-US') : '—',
       trendsAccFmt: (this.td||{}).totalAcc ? (this.td.totalAcc).toLocaleString('en-US') : '—',
-      monthlyBars: (()=>{ const td=this.td||{}; const mon=td.monthly||Array(12).fill(0); const mx=Math.max(1,...mon); const MZ=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']; const ME=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return mon.map((v,i)=>({h:(v/mx*100).toFixed(0)+'%',label:zh?MZ[i]:ME[i],hot:v===mx&&v>0})); })(),
-      hourlyBars: (()=>{ const td=this.td||{}; const hr=td.hourly||Array(24).fill(0); const mx=Math.max(1,...hr); return hr.map((v,i)=>({h:(v/mx*100).toFixed(0)+'%',label:i%4===0?String(i).padStart(2,'0'):'',hot:v===mx&&v>0})); })(),
+      monthlyBars: (()=>{
+        const td=this.td||{}; const mon=td.monthly||Array(12).fill(0);
+        const a1=td.monthlyA1||Array(12).fill(0), a2=td.monthlyA2||Array(12).fill(0);
+        const mx=Math.max(1,...mon);
+        const MZ=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        const ME=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const bh = s.barHover;
+        return mon.map((v,i)=>{
+          const hot = bh && bh.type==='monthly' && bh.idx===i;
+          return {
+            hA1:(a1[i]/mx*100).toFixed(1)+'%', hA2:(a2[i]/mx*100).toFixed(1)+'%',
+            bgA1: hot ? '#f59e2e' : '#ff5a3c', bgA2: hot ? '#fbbf24' : '#f59e2e',
+            label:zh?MZ[i]:ME[i], n:v,
+            onEnter:e=>this.setState({chartTip:{label:zh?MZ[i]:ME[i],a1:a1[i],a2:a2[i],cx:e.clientX,cy:e.clientY}, barHover:{type:'monthly',idx:i}}),
+            onLeave:()=>this.setState({chartTip:null, barHover:null})
+          };
+        });
+      })(),
+      hourlyBars: (()=>{
+        const td=this.td||{}; const hr=td.hourly||Array(24).fill(0);
+        const a1=td.hourlyA1||Array(24).fill(0), a2=td.hourlyA2||Array(24).fill(0);
+        const mx=Math.max(1,...hr);
+        const bh = s.barHover;
+        return hr.map((v,i)=>{
+          const hot = bh && bh.type==='hourly' && bh.idx===i;
+          return {
+            hA1:(a1[i]/mx*100).toFixed(1)+'%', hA2:(a2[i]/mx*100).toFixed(1)+'%',
+            bgA1: hot ? '#f59e2e' : '#ff5a3c', bgA2: hot ? '#fbbf24' : '#f59e2e',
+            label:i%4===0?String(i).padStart(2,'0'):'', n:v,
+            onEnter:e=>this.setState({chartTip:{label:String(i).padStart(2,'0')+'–'+String((i+1)%24).padStart(2,'0')+(zh?'時':'h'),a1:a1[i],a2:a2[i],cx:e.clientX,cy:e.clientY}, barHover:{type:'hourly',idx:i}}),
+            onLeave:()=>this.setState({chartTip:null, barHover:null})
+          };
+        });
+      })(),
       yearBars: (()=>{ const td=this.td||{}; const yrs=td.years||[]; const mx=Math.max(1,...yrs.map(y=>y.acc)); return yrs.map(y=>({h:(y.acc/mx*100).toFixed(0)+'%',label:String(y.year),n:y.acc.toLocaleString('en-US'),deaths:y.deaths.toLocaleString('en-US'),hot:y.acc===mx})); })(),
+      chartTooltip: (()=>{
+        const t = this.state.chartTip;
+        if (!t) return null;
+        const zh = s.lang==='zh';
+        const rows = [];
+        if (t.deaths != null) rows.push(React.createElement('div',{key:'d',style:{color:'#ff8a5c'}},(zh?'死亡：':'Deaths: ')+(t.deaths||0).toLocaleString('en-US')));
+        if (t.inj != null) rows.push(React.createElement('div',{key:'i',style:{color:'#f0b45a'}},(zh?'受傷：':'Injuries: ')+(t.inj||0).toLocaleString('en-US')));
+        if (t.a1 != null) rows.push(React.createElement('div',{key:'a1',style:{color:'#ff8a5c'}},'A1 '+(zh?'致死：':'fatal: ')+(t.a1||0).toLocaleString('en-US')));
+        if (t.a2 != null) rows.push(React.createElement('div',{key:'a2',style:{color:'#f0b45a'}},'A2 '+(zh?'受傷：':'injury: ')+(t.a2||0).toLocaleString('en-US')));
+        if (t.count != null) rows.push(React.createElement('div',{key:'c',style:{color:'#ff8a5c'}},(zh?'事故：':'Accidents: ')+(t.count||0).toLocaleString('en-US')));
+        return React.createElement('div', {
+          style: {
+            position:'fixed', top:(t.cy-12)+'px', left:t.cx+'px',
+            transform:'translate(-50%,-100%)',
+            background:'#1a1a1e', border:'1px solid #2a2a30', borderRadius:'6px',
+            padding:'7px 12px', pointerEvents:'none', zIndex:9999,
+            font:"500 11px 'IBM Plex Mono','Noto Sans TC'", color:'#cfcfd6',
+            whiteSpace:'nowrap', lineHeight:'1.7', boxShadow:'0 4px 16px rgba(0,0,0,.5)'
+          }
+        },
+          React.createElement('div',{style:{color:'#6c6c74',fontSize:10,marginBottom:2}}, t.label),
+          ...rows
+        );
+      })(),
       trendLineChart: (()=>{
         const td=this.td||{}; const qs=td.quarters||[];
         if(!qs.length) return null;
@@ -893,43 +976,60 @@ class Component extends DCLogic {
         const areaD=n>1?`M${dPts[0].x} ${H-pb} ${dPts.map(p=>`L${p.x} ${p.y}`).join(' ')} L${dPts[n-1].x} ${H-pb}Z`:``;
         const mono="'IBM Plex Mono',monospace";
         const fmtK=v=>v>=10000?(v/1000).toFixed(0)+'k':v>=1000?(v/1000).toFixed(1)+'k':String(v);
+        const fs = Math.max(10, Math.min(13, 860 / Math.max(qs.length, 8) * 0.14)); // dynamic font size
         // grid lines (4 levels) — dual labels L=deaths, R=injuries
         const gridLns=[0.25,0.5,0.75,1].map((f,gi)=>{
           const y=pt+cH-f*cH;
           return React.createElement('g',{key:'gr'+gi},
             React.createElement('line',{x1:px,y1:y,x2:W-pr,y2:y,stroke:'#1a1a1e',strokeWidth:'1'}),
-            React.createElement('text',{x:px-5,y:y+4,textAnchor:'end',fill:'#ff8a5c',fontSize:9,fontFamily:mono},fmtK(Math.round(maxD*f))),
-            React.createElement('text',{x:W-pr+5,y:y+4,textAnchor:'start',fill:'#e09a2a',fontSize:9,fontFamily:mono},fmtK(Math.round(maxI*f)))
+            React.createElement('text',{x:px-5,y:y+4,textAnchor:'end',fill:'#ff8a5c',fontSize:fs,fontFamily:mono},fmtK(Math.round(maxD*f))),
+            React.createElement('text',{x:W-pr+5,y:y+4,textAnchor:'start',fill:'#e09a2a',fontSize:fs,fontFamily:mono},fmtK(Math.round(maxI*f)))
           );
         });
         // year labels at Q1
         const yearLbls=dPts.filter(p=>p.q===1).map((p,i)=>
-          React.createElement('text',{key:'yl'+i,x:p.x,y:H-5,textAnchor:'middle',fill:'#6c6c74',fontSize:10,fontFamily:mono},String(p.year))
+          React.createElement('text',{key:'yl'+i,x:p.x,y:H-5,textAnchor:'middle',fill:'#6c6c74',fontSize:fs,fontFamily:mono},String(p.year))
         );
-        const dDots=dPts.map((p,i)=>React.createElement('circle',{key:'dd'+i,cx:p.x,cy:p.y,r:p.q===1?4:2,fill:'#ff5a3c',stroke:'#0a0a0c',strokeWidth:'1'}));
-        const iDots=iPts.map((p,i)=>React.createElement('circle',{key:'id'+i,cx:p.x,cy:p.y,r:p.q===1?4:2,fill:'#f59e2e',stroke:'#0a0a0c',strokeWidth:'1'}));
+        // hover: detect quarter from mouse X on the whole SVG
+        const onSvgMove = e => {
+          const svgEl = e.currentTarget;
+          const r = svgEl.getBoundingClientRect();
+          const relX = (e.clientX - r.left) / r.width;
+          const qi = Math.max(0, Math.min(n-1, Math.round(relX * (n-1))));
+          const q = qs[qi];
+          this.setState({chartTip:{label:`${q.year} Q${q.q}`,deaths:q.deaths,inj:q.inj,cx:e.clientX,cy:e.clientY}, chartHoverQ:qi});
+        };
+        const onSvgLeave = () => this.setState({chartTip:null, chartHoverQ:null});
+        const hitAreas = [];
+        // vertical hover line
+        const hqi = s.chartHoverQ;
+        const hoverLine = (hqi != null && hqi >= 0 && hqi < n)
+          ? React.createElement('line',{key:'hvl',x1:toX(hqi),y1:pt,x2:toX(hqi),y2:pt+cH,stroke:'#ffffff',strokeWidth:'1',strokeDasharray:'3 3',opacity:'.35',pointerEvents:'none'})
+          : null;
+        const dDots=dPts.map((p,i)=>React.createElement('circle',{key:'dd'+i,cx:p.x,cy:p.y,r:p.q===1?4:2,fill:'#ff5a3c',stroke:'#0a0a0c',strokeWidth:'1',pointerEvents:'none'}));
+        const iDots=iPts.map((p,i)=>React.createElement('circle',{key:'id'+i,cx:p.x,cy:p.y,r:p.q===1?4:2,fill:'#f59e2e',stroke:'#0a0a0c',strokeWidth:'1',pointerEvents:'none'}));
         // axis labels
         const axLbls=React.createElement('g',{key:'ax'},
-          React.createElement('text',{x:px-5,y:pt-10,textAnchor:'end',fill:'#ff8a5c',fontSize:9,fontFamily:mono},zh?'← 死亡':'← Deaths'),
-          React.createElement('text',{x:W-pr+5,y:pt-10,textAnchor:'start',fill:'#e09a2a',fontSize:9,fontFamily:mono},zh?'受傷 →':'Injuries →')
+          React.createElement('text',{x:px-5,y:pt-10,textAnchor:'end',fill:'#ff8a5c',fontSize:fs,fontFamily:mono},zh?'← 死亡':'← Deaths'),
+          React.createElement('text',{x:W-pr+5,y:pt-10,textAnchor:'start',fill:'#e09a2a',fontSize:fs,fontFamily:mono},zh?'受傷 →':'Injuries →')
         );
         const legend=React.createElement('g',{key:'lg'},
           React.createElement('circle',{cx:px,cy:16,r:4,fill:'#ff5a3c'}),
-          React.createElement('text',{x:px+9,y:20,fill:'#cfcfd6',fontSize:10,fontFamily:mono},zh?'死亡（左軸）':'Deaths (L)'),
+          React.createElement('text',{x:px+9,y:20,fill:'#cfcfd6',fontSize:fs,fontFamily:mono},zh?'死亡（左軸）':'Deaths (L)'),
           React.createElement('circle',{cx:px+115,cy:16,r:4,fill:'#f59e2e'}),
-          React.createElement('text',{x:px+124,y:20,fill:'#cfcfd6',fontSize:10,fontFamily:mono},zh?'受傷（右軸）':'Injuries (R)')
+          React.createElement('text',{x:px+124,y:20,fill:'#cfcfd6',fontSize:fs,fontFamily:mono},zh?'受傷（右軸）':'Injuries (R)')
         );
-        return React.createElement('svg',{width:'100%',viewBox:`0 0 ${W} ${H}`,style:{overflow:'visible'}},
+        return React.createElement('svg',{width:'100%',minWidth:Math.max(320,n*28)+'px',viewBox:`0 0 ${W} ${H}`,style:{overflow:'visible',display:'block',minWidth:Math.max(320,n*28)+'px',cursor:'crosshair'},onMouseMove:onSvgMove,onMouseLeave:onSvgLeave},
           React.createElement('defs',{},React.createElement('linearGradient',{id:'tg2',x1:'0',y1:'0',x2:'0',y2:'1'},React.createElement('stop',{offset:'0%',stopColor:'#ff5a3c',stopOpacity:'.10'}),React.createElement('stop',{offset:'100%',stopColor:'#ff5a3c',stopOpacity:'0'}))),
           legend, axLbls, ...gridLns,
           React.createElement('path',{d:areaD,fill:'url(#tg2)'}),
           React.createElement('path',{d:lineI,fill:'none',stroke:'#f59e2e',strokeWidth:'2',strokeDasharray:'5 3',strokeLinejoin:'round'}),
           React.createElement('path',{d:lineD,fill:'none',stroke:'#ff5a3c',strokeWidth:'2',strokeLinejoin:'round'}),
-          ...iDots, ...dDots, ...yearLbls
+          ...hitAreas, hoverLine, ...iDots, ...dDots, ...yearLbls
         );
       })(),
-      topVehBars: (()=>{ const tv=(this.td&&this.td.topVeh)||[]; const mx=Math.max(1,...tv.map(([,c])=>c)); return tv.map(([name,count])=>({label:tr(name)||name, count:count.toLocaleString('en-US'), w:(count/mx*100).toFixed(0)+'%'})); })(),
-      topCountyBars: (()=>{ const tc=(this.td&&this.td.topCounty)||[]; const mx=Math.max(1,...tc.map(([,c])=>c)); return tc.map(([name,count])=>({label:tr(name)||name, count:count.toLocaleString('en-US'), w:(count/mx*100).toFixed(0)+'%'})); })(),
+      topVehBars: (()=>{ const td=this.td||{}; const tv=td.topVeh||[]; const mx=Math.max(1,...tv.map(([,c])=>c)); const bh=s.barHover; return tv.map(([name,count],i)=>{ const a1=(td.vehA1&&td.vehA1[name])||0, a2=(td.vehA2&&td.vehA2[name])||0; const hot=bh&&bh.type==='veh'&&bh.idx===i; return {label:tr(name)||name, count:count.toLocaleString('en-US'), wA1:(a1/mx*100).toFixed(1)+'%', wA2:(a2/mx*100).toFixed(1)+'%', bgA1:hot?'#f59e2e':'#ff5a3c', bgA2:hot?'#fbbf24':'#f59e2e', a1, a2, onEnter:e=>this.setState({chartTip:{label:tr(name)||name,a1,a2,cx:e.clientX,cy:e.clientY},barHover:{type:'veh',idx:i}}), onLeave:()=>this.setState({chartTip:null,barHover:null})}; }); })(),
+      topCountyBars: (()=>{ const td=this.td||{}; const tc=td.topCounty||[]; const mx=Math.max(1,...tc.map(([,c])=>c)); const bh=s.barHover; return tc.map(([name,count],i)=>{ const a1=(td.countyA1&&td.countyA1[name])||0, a2=(td.countyA2&&td.countyA2[name])||0; const hot=bh&&bh.type==='county'&&bh.idx===i; return {label:tr(name)||name, count:count.toLocaleString('en-US'), wA1:(a1/mx*100).toFixed(1)+'%', wA2:(a2/mx*100).toFixed(1)+'%', bgA1:hot?'#f59e2e':'#ff5a3c', bgA2:hot?'#fbbf24':'#f59e2e', a1, a2, onEnter:e=>this.setState({chartTip:{label:tr(name)||name,a1,a2,cx:e.clientX,cy:e.clientY},barHover:{type:'county',idx:i}}), onLeave:()=>this.setState({chartTip:null,barHover:null})}; }); })(),
       trendNarrative: (()=>{
         const td=this.td||{}; const yrs=td.years||[];
         if(!yrs.length) return '';
