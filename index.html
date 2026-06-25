@@ -40,6 +40,7 @@
     .cc-tchart{overflow-x:auto !important}
     .cc-tpad{padding:30px 20px 60px !important}
     .cc-tlead{grid-template-columns:1fr !important;gap:28px 0 !important}
+    .cc-res-cover{width:58px !important}
     .cc-tlead .cc-tlead-inj div:first-child{font-size:60px !important}
   }
 </style>
@@ -166,7 +167,7 @@
 
       <div style="border-left:3px solid #ff5a3c;padding:22px 26px;background:#0e0e10;border-radius:0 8px 8px 0;margin-bottom:24px">
         <div style="display:flex;gap:18px;align-items:flex-start">
-          <img src="https://ars.els-cdn.com/content/image/X09658564.jpg" alt="Trans. Res. A" style="width:110px;flex:none;border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.7);margin-top:2px">
+          <img src="https://ars.els-cdn.com/content/image/X09658564.jpg" alt="Trans. Res. A" style="width:110px;flex:none;border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.7);margin-top:2px" class="cc-res-cover">
           <div style="flex:1">
             <div style="font:500 10px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:1.5px;margin-bottom:10px">TRANSPORTATION RESEARCH PART A · VOL. 205 · 2026</div>
             <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;line-height:1.35;margin-bottom:14px">The causal effects of removing hook-turn regulation on road safety</div>
@@ -178,7 +179,7 @@
 
       <div style="border-left:3px solid #ff5a3c;padding:22px 26px;background:#0e0e10;border-radius:0 8px 8px 0;margin-bottom:40px">
         <div style="display:flex;gap:18px;align-items:flex-start">
-          <img src="https://ars.els-cdn.com/content/image/X26669579.jpg" alt="Ann. Tour. Res." style="width:110px;flex:none;border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.7);margin-top:2px">
+          <img src="https://ars.els-cdn.com/content/image/X26669579.jpg" alt="Ann. Tour. Res." style="width:110px;flex:none;border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.7);margin-top:2px" class="cc-res-cover">
           <div style="flex:1">
             <div style="font:500 10px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:1.5px;margin-bottom:10px">ANNALS OF TOURISM RESEARCH EMPIRICAL INSIGHTS · VOL. 7(1) · 2026</div>
             <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;line-height:1.35;margin-bottom:14px">Traffic accidents of religious tourism</div>
@@ -430,40 +431,23 @@ class Component extends DCLogic {
       const meta = await (await fetch('data/meta.json')).json();
       this.meta = meta; const cb = meta.codebooks || {};
       this.cb = cb; this.pools = [];
-      const yrs = [...new Set(meta.files.map(f => f.year))].sort((a, b) => a - b);
-      this.years = yrs;
-      const latestYear = yrs[yrs.length - 1];
-      // Commit years to state first so applyFilters can filter by year
-      await new Promise(resolve => this.setState({ years: yrs.map(String), year: latestYear }, resolve));
-      this.records = [];
-      let loaded = 0; const total = meta.files.length;
-      // Fetch ALL binary files in parallel; render map as each one arrives
+      const recs = [];
+      // Fetch ALL binary files in parallel (key speed-up for multi-year datasets)
       await Promise.all(meta.files.map(f =>
         fetch('data/' + f.path)
           .then(r => r.arrayBuffer())
-          .then(buf => {
-            const chunk = [];
-            this.decodeBin(buf, f.count, cb, chunk, f.year, f.partyCount || 0);
-            for (const r of chunk) this.records.push(r);
-            this.records.sort((a, b) => a.doy - b.doy);
-            loaded++;
-            this.buildTrends(); this.buildCountyList(); this.applyFilters();
-            if (loaded === total) this.hideLoader();
-          })
+          .then(buf => this.decodeBin(buf, f.count, cb, recs, f.year, f.partyCount || 0))
       ));
-      console.log('loaded binary rows:', this.records.length, 'years:', this.years.join(','));
-      return this.records;
+      recs.sort((a, b) => a.doy - b.doy);
+      this.years = [...new Set(meta.files.map(f => f.year))].sort((a, b) => a - b);
+      console.log('loaded binary rows:', recs.length, 'years:', this.years.join(','));
+      return recs;
     } catch (e) {
       try {
         const recs = await (await fetch('data/accidents-sample.json')).json();
         recs.forEach(r => { if (r.year == null) r.year = 2018; });
         recs.sort((a, b) => a.doy - b.doy);
         this.years = [...new Set(recs.map(r => r.year))].sort((a, b) => a - b);
-        this.records = recs;
-        const latestYear = this.years[this.years.length - 1];
-        await new Promise(resolve => this.setState({ years: this.years.map(String), year: latestYear }, resolve));
-        this.buildTrends(); this.buildCountyList(); this.applyFilters();
-        this.hideLoader();
         return recs;
       } catch (e2) { console.warn('no data source', e2); return []; }
     }
@@ -533,12 +517,12 @@ class Component extends DCLogic {
   }
 
   async init() {
-    // Register Service Worker for cache-first binary loading (huge speed win on repeat visits)
+    // Register Service Worker (cache-first for .bin on repeat visits)
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
 
-    // Init map BEFORE loading data so basemap renders immediately
+    // Start map initialisation immediately
     const map = new maplibregl.Map({
       container: 'map',
       style: 'https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json',
@@ -547,6 +531,29 @@ class Component extends DCLogic {
     });
     map.touchZoomRotate.disableRotation();
     this.map = map;
+    map.fitBounds([[119.4, 21.85], [122.05, 25.4]], { padding: 48, duration: 0 });
+
+    // Run map load + data fetch CONCURRENTLY (each takes ~1–3 s; together = max, not sum)
+    const [recs] = await Promise.all([
+      this.loadData(),
+      new Promise(resolve => {
+        map.on('load', () => {
+          try {
+            const layers = map.getStyle().layers || [];
+            for (const ly of layers) {
+              if (ly.type === 'background') map.setPaintProperty(ly.id, 'background-color', '#08080a');
+              else if (ly.type === 'fill') map.setPaintProperty(ly.id, 'fill-opacity', 0.5);
+              else if (ly.type === 'line') map.setPaintProperty(ly.id, 'line-opacity', 0.18);
+            }
+          } catch (e) {}
+          resolve();
+        });
+        setTimeout(resolve, 4000); // safety: don't block forever if basemap stalls
+      })
+    ]);
+
+    // Overlay created only AFTER map GL context is confirmed ready
+    this.records = recs;
     const overlay = new deck.MapboxOverlay({ interleaved: false, pickingRadius: 9, layers: [] });
     map.addControl(overlay);
     this.overlay = overlay;
@@ -555,22 +562,15 @@ class Component extends DCLogic {
       const picked = overlay.pickObject({ x: e.point.x, y: e.point.y, radius: 9, layerIds: ['core'] });
       if (!picked) this.closeDetail();
     });
-    map.fitBounds([[119.4, 21.85], [122.05, 25.4]], { padding: 48, duration: 0 });
-    map.on('load', () => {
-      try {
-        const layers = map.getStyle().layers || [];
-        for (const ly of layers) {
-          if (ly.type === 'background') map.setPaintProperty(ly.id, 'background-color', '#08080a');
-          else if (ly.type === 'fill') map.setPaintProperty(ly.id, 'fill-opacity', 0.5);
-          else if (ly.type === 'line') map.setPaintProperty(ly.id, 'line-opacity', 0.18);
-        }
-      } catch (e) {}
+
+    const yrs = (this.years && this.years.length) ? this.years : [2018];
+    const latestYear = yrs[yrs.length - 1];
+    this.buildTrends();
+    this.buildCountyList();
+    this.setState({ years: yrs.map(String), year: latestYear }, () => {
+      this.applyFilters();
       this.hideLoader();
     });
-    setTimeout(() => this.hideLoader(), 2500);
-
-    // Load data progressively — map already visible while data streams in
-    await this.loadData();
   }
 
   buildTrends() {
