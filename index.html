@@ -187,7 +187,7 @@
         </div>
       </div>
 
-      <div style="border-left:3px solid #ff5a3c;padding:22px 26px;background:#0e0e10;border-radius:0 8px 8px 0;margin-bottom:40px">
+      <div style="border-left:3px solid #ff5a3c;padding:22px 26px;background:#0e0e10;border-radius:0 8px 8px 0;margin-bottom:24px">
         <div style="display:flex;gap:18px;align-items:flex-start">
           <img src="https://ars.els-cdn.com/content/image/X26669579.jpg" alt="Ann. Tour. Res." style="width:110px;flex:none;border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.7);margin-top:2px" class="cc-res-cover">
           <div style="flex:1">
@@ -195,6 +195,18 @@
             <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;line-height:1.35;margin-bottom:14px">Traffic accidents of religious tourism</div>
             <div style="font:400 13px/1.8 'Noto Sans TC';color:#8a8a92;margin-bottom:18px">{{ T.paper2Abstract }}</div>
             <a href="https://doi.org/10.1016/j.annale.2026.100209" target="_blank" style="display:inline-flex;align-items:center;font:500 11px 'IBM Plex Mono';color:#ff8a5c;text-decoration:none;border:1px solid #3a2420;padding:7px 14px;border-radius:5px;transition:.15s">10.1016/j.annale.2026.100209</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="border-left:3px solid #ff5a3c;padding:22px 26px;background:#0e0e10;border-radius:0 8px 8px 0;margin-bottom:40px">
+        <div style="display:flex;gap:18px;align-items:flex-start">
+          <img src="https://yyliou.github.io/jaere-cover.jpg" alt="JAERE" style="width:110px;flex:none;border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.7);margin-top:2px" class="cc-res-cover">
+          <div style="flex:1">
+            <div style="font:500 10px 'IBM Plex Mono';color:#ff5a3c;letter-spacing:1.5px;margin-bottom:10px">J. OF THE ASSOCIATION OF ENVIRONMENTAL AND RESOURCE ECONOMISTS · FORTHCOMING · 2026</div>
+            <div style="font:700 17px 'Space Grotesk';color:#f2f2f4;line-height:1.35;margin-bottom:14px">Air pollution during religious holidays: Evidence from Tomb-Sweeping Day</div>
+            <div style="font:400 13px/1.8 'Noto Sans TC';color:#8a8a92;margin-bottom:18px">{{ T.paper3Abstract }}</div>
+            <a href="https://doi.org/10.1086/743452" target="_blank" style="display:inline-flex;align-items:center;font:500 11px 'IBM Plex Mono';color:#ff8a5c;text-decoration:none;border:1px solid #3a2420;padding:7px 14px;border-radius:5px;transition:.15s">10.1086/743452</a>
           </div>
         </div>
       </div>
@@ -883,7 +895,7 @@ class Component extends DCLogic {
         yearTitle: zh ? '年度事故件數' : 'Accidents by year',
         trendSub: (()=>{ const td=this.td||{}; const yrs=td.years||[]; const mn=yrs.length?yrs[0].year:2025; const mx=yrs.length?yrs[yrs.length-1].year:2025; return zh?(yrs.length>1?`${mn}–${mx} · 全台累計`:`${mn} · 全台`):(yrs.length>1?`${mn}–${mx} · Taiwan`:`${mn} · Taiwan`); })(),
         researchTitle: zh ? '相關研究' : 'Related Research',
-        researchDesc: zh ? '以下兩篇論文利用內政部警政署道路交通事故開放資料進行因果推論研究。' : 'The following papers use Taiwan\'s National Police Agency Road Traffic Accident Database for causal analysis.',
+        researchDesc: zh ? '以下三篇論文利用內政部警政署道路交通事故資料等政府開放資料進行因果推論研究。' : 'The following papers use Taiwan\'s open government data — including the National Police Agency road traffic accident records — for causal analysis.',
         trendVehTitle: zh ? '車種別事故分布' : 'Accidents by vehicle type',
         trendCountyTitle: zh ? '縣市別事故數' : 'Accidents by county',
         paper1Abstract: zh
@@ -892,6 +904,9 @@ class Component extends DCLogic {
         paper2Abstract: zh
           ? '本研究探討大甲媽祖遶境是否會增加交通事故。利用臺灣交通事故資料進行分析後發現，遶境期間受影響地區的受傷事故明顯增加，而且在媽祖鑾轎經過時增幅最大。研究認為，大量湧入的人車流量是事故增加的主要原因。'
           : 'The study examines whether Taiwan\'s Dajia Mazu Pilgrimage increases traffic accidents. Using accident records and a difference-in-differences approach, the authors find that injury-related crashes rise substantially during the event, especially when the Mazu palanquin passes through a township. Increased traffic flow appears to be the main reason behind the higher accident risk.',
+        paper3Abstract: zh
+          ? '本研究以臺灣客家族群於元宵節掃墓的習俗為例，檢驗大型宗教活動對空氣品質的影響。結果顯示，掃墓週末整體空氣品質下降 17.5%，特定污染物濃度上升 13.6% 至 25.7%；與過往將污染歸因於焚香、燒紙錢與施放鞭炮的研究不同，本文發現車流量增加與車速下降才是主要機制，掃墓期間的車禍受傷人數也隨之明顯增加。若能抑制期間的車流激增，估計可減少約新臺幣 3,310 萬元的額外健康成本。'
+          : 'Using Taiwan\'s Hakka Tomb-Sweeping Day as a case study, this paper examines how large-scale religious observances affect air quality. Overall air quality falls by 17.5% during the holiday weekend, and specific pollutants rise by 13.6%–25.7%. In contrast to earlier studies attributing the pollution to incense, joss paper, and fireworks, the authors identify greater motor vehicle use and lower travel speeds as the primary mechanisms, with injuries from motor vehicle accidents also rising during the observance. Limiting the holiday traffic surge could cut excess health-related costs by NT$33.1 million.',
       }), Tv,
       // page nav
       goTrends: () => this.setState({ page: 'trends' }),

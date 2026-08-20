@@ -142,7 +142,7 @@ For datasets beyond ~5 M records, consider `deck.gl`'s `DataFilterExtension` to 
 
 ## Related Research
 
-This dataset underlies the following peer-reviewed publications:
+This dataset — together with related Taiwan open government data — underlies the following peer-reviewed publications:
 
 **Liou, Y.-Y., & Chang, H.-H. (2026).** The causal effects of removing hook-turn regulation on road safety. *Transportation Research Part A: Policy and Practice*, 205, 104860.  
 → [10.1016/j.tra.2026.104860](https://doi.org/10.1016/j.tra.2026.104860)
@@ -153,6 +153,11 @@ This dataset underlies the following peer-reviewed publications:
 → [10.1016/j.annale.2026.100209](https://doi.org/10.1016/j.annale.2026.100209)
 
 > Uses a difference-in-differences design with the Dajia Mazu Pilgrimage as the treatment event. Finds a significant increase in non-fatal injury accidents during the pilgrimage; combined productivity loss and medical costs account for 6.3% of Taiwan's total annual traffic accident costs.
+
+**Chang, H.-H., Liou, Y.-Y., & Meyerhoefer, C. D. (2026).** Air pollution during religious holidays: Evidence from Tomb-Sweeping Day. *Journal of the Association of Environmental and Resource Economists*, forthcoming.  
+→ [10.1086/743452](https://doi.org/10.1086/743452)
+
+> Uses Taiwan's Hakka Tomb-Sweeping Day as a natural experiment. Finds overall air quality falls 17.5% during the holiday weekend (specific pollutants rise 13.6–25.7%), driven mainly by greater motor-vehicle use and lower travel speeds rather than incense or joss-paper burning, with motor-vehicle accident injuries also rising during the observance; limiting the holiday traffic surge could cut excess health-related costs by NT$33.1 million.
 
 ---
 
